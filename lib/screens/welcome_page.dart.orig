@@ -1,0 +1,163 @@
+import 'package:flutter/material.dart';
+import 'string_localizations.dart';
+import 'values/dimensions.dart'
+    as dimensions;
+
+import 'select_car_page.dart';
+
+const _featureIconSize = 48.0;
+const _featureIconBorderRadius = 8.0;
+
+/// The max screen height before we switch to smaller top padding.
+const _screenHeightPaddingBreakPoint = 600.0;
+const _largeTitlePadding = 108.0;
+
+const _featureItemPadding = 10.0;
+
+/// Main page which is the association entry point.
+class WelcomePage extends StatefulWidget {
+  @override
+  State createState() => _WelcomePageState();
+}
+
+class _WelcomePageState extends State<WelcomePage> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final strings = StringLocalizations.of(context);
+
+    return Scaffold(
+      body: Container(
+        margin: EdgeInsets.only(
+          top: screenHeight > _screenHeightPaddingBreakPoint
+              ? _largeTitlePadding
+              : _largeTitlePadding / 2,
+          bottom: screenHeight > _screenHeightPaddingBreakPoint
+              ? dimensions.pageBottomPadding
+              : dimensions.pageBottomPadding / 2,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            // Explanation title.
+            Padding(
+              padding: EdgeInsets.only(
+                right: dimensions.titleHorizontalPadding,
+                left: dimensions.titleHorizontalPadding,
+              ),
+              child: Text(
+                strings.welcomeTitle,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.headline4,
+              ),
+            ),
+
+            // Explanation text.
+            Padding(
+              padding: EdgeInsets.only(
+                top: dimensions.textSpacing,
+                right: dimensions.pageHorizontalPadding,
+                left: dimensions.pageHorizontalPadding,
+              ),
+              child: Text(
+                strings.welcomeContent,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyText1,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: dimensions.largeIconPadding,
+                horizontal: dimensions.pageHorizontalPadding,
+              ),
+              child: Column(
+                children: [
+                  _featureLabel(
+                      Image(
+                        image:
+                            AssetImage('assets/images/icon_welcome_lock.png'),
+                      ),
+                      strings.trustedDeviceShortExplanation),
+                  _featureLabel(
+                    Image(
+                        image:
+                            AssetImage('assets/images/icon_welcome_cal.png')),
+                    strings.calendarSyncShortExplanation,
+                  ),
+                  // Messenger sync feature is only available in android
+                  // devices.
+                  if (Theme.of(context).platform == TargetPlatform.android)
+                    _featureLabel(
+                      Image(
+                        image: AssetImage('assets/images/icon_welcome_msg.png'),
+                      ),
+                      strings.messengerSyncShortExplanation,
+                    ),
+                ],
+              ),
+            ),
+            Spacer(),
+            // The button to begin the process of associating a new car.
+            Container(
+              // Warning text to the user that bluetooth is required.
+              child: Container(
+                padding: const EdgeInsets.only(
+                  right: dimensions.pageHorizontalPadding,
+                  left: dimensions.pageHorizontalPadding,
+                  bottom: dimensions.textSpacing,
+                ),
+                child: Text(
+                  strings.bluetoothRequirementExplanation,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodyText2,
+                ),
+              ),
+            ),
+            ButtonTheme(
+              height: dimensions.actionButtonHeight,
+              minWidth: dimensions.actionButtonWidth,
+              child: RaisedButton(
+                textColor: Theme.of(context).colorScheme.background,
+                shape: RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.circular(dimensions.actionButtonRadius)),
+                child: Text(
+                  strings.getStartedButtonLabel,
+                ),
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (_) => SelectCarPage()));
+                },
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _featureLabel(Image icon, String explanation) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: _featureItemPadding),
+        child: ListTile(
+          leading: Container(
+            height: _featureIconSize,
+            width: _featureIconSize,
+            decoration: BoxDecoration(
+              shape: BoxShape.rectangle,
+              borderRadius: BorderRadius.circular(_featureIconBorderRadius),
+            ),
+            child: icon,
+          ),
+          title: Text(
+            explanation,
+            style: Theme.of(context).textTheme.bodyText1,
+          ),
+        ),
+      );
+}

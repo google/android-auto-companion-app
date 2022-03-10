@@ -1,0 +1,22 @@
+include ':android-auto-companion-android:trustagent'
+include ':android-auto-companion-android:loggingsupport'
+include ':android-auto-companion-android:trusteddevice'
+include ':android-auto-companion-android:trusteddeviceproto'
+include ':android-auto-companion-android:companionprotos'
+include ':android-auto-companion-android:encryptionrunner'
+include ':android-auto-companion-android:connectionservice'
+include ':android-auto-companion-android:communicationproto'
+include ':android-auto-companion-android:communication'
+include ':android-auto-companion-android:calendarsync'
+include ':ukey2'
+include ':app'
+
+def localPropertiesFile = new File(rootProject.projectDir, "local.properties")
+def properties = new Properties()
+
+assert localPropertiesFile.exists()
+localPropertiesFile.withReader("UTF-8") { reader -> properties.load(reader) }
+
+def flutterSdkPath = properties.getProperty("flutter.sdk")
+assert flutterSdkPath != null, "flutter.sdk not set in local.properties"
+apply from: "$flutterSdkPath/packages/flutter_tools/gradle/app_plugin_loader.gradle"

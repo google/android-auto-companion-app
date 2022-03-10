@@ -1,0 +1,169 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'car.dart';
+import 'common_app_bar.dart';
+import 'connection_manager.dart';
+import 'string_localizations.dart';
+import 'values/dimensions.dart'
+    as dimensions;
+import 'package:provider/provider.dart';
+
+/// Page that handles the explicit enrollment into the trust agent feature.
+class TrustAgentEnrollmentPage extends StatefulWidget {
+  final Car associatedCar;
+
+  TrustAgentEnrollmentPage({Key key, @required this.associatedCar})
+      : super(key: key);
+
+  @override
+  State createState() => TrustAgentEnrollmentState();
+}
+
+class TrustAgentEnrollmentState extends State<TrustAgentEnrollmentPage>
+    with WidgetsBindingObserver
+    implements TrustAgentCallback {
+  ConnectionManager _connectionManager;
+  bool _isDialogShowing = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _connectionManager = Provider.of<ConnectionManager>(context, listen: false);
+    _connectionManager.registerTrustAgentCallback(this);
+    _connectionManager.enrollTrustAgent(widget.associatedCar);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    WidgetsBinding.instance.removeObserver(this);
+    _connectionManager.unregisterTrustAgentCallback(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _connectionManager.enrollTrustAgent(widget.associatedCar);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final strings = StringLocalizations.of(context);
+
+    return Scaffold(
+      appBar: commonAppBar(
+        context,
+        onBackPressed: () {
+          Navigator.pop(context);
+          _connectionManager.stopTrustAgentEnrollment(widget.associatedCar);
+        },
+      ),
+      body: Container(
+        alignment: Alignment.topCenter,
+        padding: EdgeInsets.only(
+          top: dimensions.appBarBottomPadding,
+          bottom: dimensions.pageBottomPadding,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.only(
+                right: dimensions.titleHorizontalPadding,
+                left: dimensions.titleHorizontalPadding,
+                bottom: dimensions.textSpacing,
+              ),
+              child: Text(
+                strings.enrollingTitle,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.headline4,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: dimensions.pageHorizontalPadding,
+              ),
+              child: Text(
+                strings.enrollingExplanation,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyText1,
+              ),
+            ),
+            Spacer(),
+            SvgPicture.asset('assets/images/ill_carScreenNotification.svg'),
+            Spacer(),
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: dimensions.pageHorizontalPadding,
+              ),
+              child: Text(
+                strings.enrollingLoadingLabel,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyText2,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  void onEnrollmentCompleted(String carId) {
+    if (carId == widget.associatedCar.id) {
+      Navigator.pop(context);
+    }
+  }
+
+  @visibleForTesting
+  @override
+  void onPasscodeNotSet() {
+    _showPasscodeAlertDialog();
+  }
+
+  Future<void> _showPasscodeAlertDialog() async {
+    if (_isDialogShowing) return;
+    final strings = StringLocalizations.of(context);
+    _isDialogShowing = true;
+    // Require dialog to be explicitly dismissed by clicking the "Done" button.
+    // This is because the dialog will trigger a navigation away from this page.
+    // It can be jarring to users if the dialog is accidentally dismissed.
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(strings.passcodeAlertDialogTitle),
+          content: Text(strings.passcodeAlertDialogContent),
+          actions: [
+            FlatButton(
+              onPressed: () {
+                // Return back to [CarDetailsPage]
+                Navigator.of(context).popUntil((route) => route.isFirst);
+                _connectionManager
+                    .stopTrustAgentEnrollment(widget.associatedCar);
+              },
+              child: Text(strings.cancelButtonLabel),
+            ),
+            FlatButton(
+              child: Text(strings.openSettingsLabel),
+              onPressed: () {
+                _connectionManager.openSecuritySettings();
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
+    _isDialogShowing = false;
+  }
+
+  @override
+  void onUnlockStatusChanged(String carId, UnlockStatus status) {
+    // No unlock should happen at this stage, so this can be ignored.
+  }
+}

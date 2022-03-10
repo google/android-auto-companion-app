@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ Copyright 2022 Google LLC
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<resources>
+  <string name="app_name" translatable="false">CompanionApp</string>
+  <string
+      name="trusted_device_notification_channel_name"
+      translation_description="Trusted device notification channel name [CHAR_LIMIT=20]">
+    TrustedDevice
+  </string>
+  <string
+      name="trusted_device_unlock_notification_text"
+      translation_description="Trusted device unlock notification text [CHAR_LIMIT=50]">
+    Your profile on %1$s was unlocked
+  </string>
+  <string
+      name="trusted_device_enrollment_notification_title"
+      translation_description="Trusted device enrollment notification title [CHAR_LIMIT=50]">
+    This phone can unlock your profile
+  </string>
+  <string
+      name="trusted_device_enrollment_notification_text"
+      translation_description="Trusted device enrollment notification text [CHAR_LIMIT=120]">
+    You\'ll need to unlock your phone first to unlock %1$s. To avoid this step, open this app\’s settings.
+  </string>
+  <string
+      name="trusted_device_unenrollment_notification_title"
+      translation_description="Trusted device unenrollment notification title [CHAR_LIMIT=50]">
+    This phone can no longer unlock your profile
+  </string>
+  <string
+      name="trusted_device_unenrollment_notification_text"
+      translation_description="Trusted device unenrollment notification text [CHAR_LIMIT=120]">
+    You\'ve turned off this feature on %1$s
+  </string>
+  <string
+      name="service_foreground_notification_channel_name"
+      translation_description="Companion app service foreground notification channel name [CHAR_LIMIT=30]">
+    Companion device service
+  </string>
+  <string
+      name="service_foreground_notification_title"
+      translation_description="Companion app service foreground notification title [CHAR_LIMIT=20]">
+    Companion App
+  </string>
+  <string
+      name="service_foreground_notification_text"
+      translation_description="Companion app service foreground notification text [CHAR_LIMIT=40]">
+    Currently connected to car
+  </string>
+  <string
+      name="service_foreground_notification_channel_id"
+      translation_description="Companion app service foreground notification channel ID [CHAR_LIMIT=50]">
+    service_foreground_notification_channel_id
+  </string>
+  <!-- The simple class name of the component that will be opened by a notification. -->
+  <string name="notification_open_component" translatable="false">PhoneSyncActivity</string>
+  <string name="permission_dialog_rationale" translatable="false">
+    Access to location is necessary for using Bluetooth to communicate with the Car.
+    Allow access all the time to enable automatic reconnection even when
+    the app is in the background.
+  </string>
+  <string name="ok" translatable="false">OK</string>
+</resources>

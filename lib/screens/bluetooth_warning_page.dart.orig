@@ -1,0 +1,81 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'common_app_bar.dart';
+import 'connection_manager.dart';
+import 'string_localizations.dart';
+import 'values/dimensions.dart'
+    as dimensions;
+import 'package:provider/provider.dart';
+
+/// A page that displays a warning to the user that they need to enable
+/// Bluetooth on their device.
+///
+/// This page displays an option to navigate the user to system settings.
+class BluetoothWarningPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final strings = StringLocalizations.of(context);
+
+    return Scaffold(
+      appBar: commonAppBar(
+        context,
+        onBackPressed: () {
+          Navigator.of(context).popUntil((route) => route.isFirst);
+          Provider.of<ConnectionManager>(context, listen: false)
+              .clearCurrentAssociation();
+        },
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(
+              top: dimensions.appBarBottomPadding,
+              right: dimensions.titleHorizontalPadding,
+              left: dimensions.titleHorizontalPadding,
+              bottom: dimensions.textSpacing,
+            ),
+            child: Text(
+              strings.bluetoothWarningTitle,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.headline4,
+            ),
+          ),
+
+          // Explanation text explaining why Bluetooth is required.
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: dimensions.pageHorizontalPadding,
+            ),
+            child: Text(
+              strings.bluetoothWarningExplanation,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
+          ),
+
+          Spacer(),
+          SvgPicture.asset('assets/images/ill_bluetooth.svg'),
+          Spacer(),
+
+          Padding(
+            padding: EdgeInsets.only(
+              left: dimensions.pageHorizontalPadding,
+              right: dimensions.pageHorizontalPadding,
+              bottom: dimensions.pageBottomPadding,
+            ),
+            child: FlatButton(
+              textColor: Theme.of(context).primaryColor,
+              onPressed: () =>
+                  Provider.of<ConnectionManager>(context, listen: false)
+                      .openSettings(),
+              child: Text(strings.openSettingsLabel),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

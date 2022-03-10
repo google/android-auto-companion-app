@@ -1,0 +1,6 @@
+[submodule "android/ukey2"]
+	path = android/ukey2
+	url = https://github.com/google/ukey2
+[submodule "android/android-auto-companion-android"]
+	path = android/android-auto-companion-android
+	url = https://github.com/google/android-auto-companion-android

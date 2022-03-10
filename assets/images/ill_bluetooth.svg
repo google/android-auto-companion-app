@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="360px" height="210px" viewBox="0 0 360 210" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 61 (89581) - https://sketch.com -->
+    <title>ill_bluetooth</title>
+    <desc>Created with Sketch.</desc>
+    <g id="ill_bluetooth" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect fill="#202124" x="0" y="0" width="360" height="210"></rect>
+        <g id="Group-4">
+            <rect id="Rectangle" x="0" y="0" width="360" height="209.28"></rect>
+            <g id="Group-7" transform="translate(137.280000, 1.920000)">
+                <g id="Group-5">
+                    <g id="Group-3">
+                        <ellipse id="Oval" fill="#17181B" opacity="0.5" cx="42.768" cy="197.7696" rx="42.768" ry="8.5536"></ellipse>
+                        <g id="Group" transform="translate(12.735360, 53.222400)">
+                            <g id="Group-6">
+                                <rect id="Rectangle" fill="#5F6369" x="0" y="0" width="60.8256" height="114.048" rx="4.56192"></rect>
+                                <rect id="Rectangle" fill="#35393C" x="0" y="9.504" width="60.8256" height="95.04"></rect>
+                                <polygon id="Path-11" fill="#3C4043" points="0 9.504 60.8256 9.504 60.8256 104.544"></polygon>
+                                <rect id="Rectangle" fill="#35393C" x="21.47904" y="108.3456" width="17.1072" height="1.9008" rx="0.76032"></rect>
+                                <rect id="Rectangle" fill="#35393C" x="21.47904" y="3.8016" width="17.1072" height="1.9008" rx="0.76032"></rect>
+                            </g>
+                        </g>
+                        <g id="Group-2" transform="translate(43.305600, 15.500000) rotate(-360.000000) translate(-43.305600, -15.500000) translate(13.305600, 0.000000)" stroke="#5F6369" stroke-width="3.8016">
+                            <path d="M26.6112,39.9168 C30.1831744,36.4977052 32.3136,32.186082 32.3136,27.5001441 C32.3136,22.8701831 30.2337693,18.6056473 26.738591,15.2064" id="Path" transform="translate(29.462400, 27.561600) rotate(-90.000000) translate(-29.462400, -27.561600) "></path>
+                            <path d="M24.7313163,38.016 C30.0615839,32.3385232 33.264,25.0574779 33.264,17.1183295 C33.264,9.16880189 30.0532051,1.87909931 24.7104,-3.8016" id="Path" transform="translate(28.987200, 17.107200) rotate(-90.000000) translate(-28.987200, -17.107200) "></path>
+                            <path d="M24.7145756,35.1648 C31.2314739,27.2309089 35.1648,16.9443259 35.1648,5.7049414 C35.1648,-5.5368434 31.2297937,-15.8254197 24.7104,-23.76" id="Path" transform="translate(29.937600, 5.702400) rotate(-90.000000) translate(-29.937600, -5.702400) "></path>
+                        </g>
+                    </g>
+                </g>
+                <g id="bluetooth_gm2_24px-(1)" transform="translate(24.000000, 89.280000)">
+                    <path d="M29.76,13.4328 L20.271786,3.84 L18.6101023,3.84 L18.6101023,16.5912 L10.982974,8.88 L8.64,11.2488 L17.928812,20.64 L8.64,30.0312 L10.982974,32.4 L18.6101023,24.6888 L18.6101023,37.44 L20.271786,37.44 L29.76,27.8472 L22.61476,20.64 L29.76,13.4328 Z M21.9334697,10.2744 L25.0574351,13.4328 L21.9334697,16.5912 L21.9334697,10.2744 Z M25.0574351,27.8472 L21.9334697,31.0056 L21.9334697,24.6888 L25.0574351,27.8472 L25.0574351,27.8472 Z" id="Shape" fill="#8AB4F8" fill-rule="nonzero"></path>
+                    <polygon id="Path" points="0 0 40.32 0 40.32 40.32 0 40.32"></polygon>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

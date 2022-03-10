@@ -1,0 +1,11 @@
+"unlockNotificationContent" = "Your profile on %@ was unlocked.";
+"defaultCarName" = "your car";
+"notificationPermissionDialogTitle" = "Get notified of profile activity";
+"notificationPermissionDialogText" = "Stay informed whenever your profile is unlocked or your phone's status has been changed from the car.";
+"notNowButtonLabel" = "Not now";
+"okButtonLabel" = "OK";
+"enrollmentNotificationTitle" = "This phone can unlock your profile";
+"enrollmentNotificationBody" = "You'll need to unlock your phone first to unlock %@. To avoid this step, open this app's settings.";
+"unenrollmentNotificationTitle" = "This phone can no longer unlock your profile";
+"unenrollmentNotificationBody" = "You've turned off this feature on %@.";
+"settingsButtonLabel" = "Settings";
