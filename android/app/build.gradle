@@ -81,10 +81,5 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     // The ConnectedDeviceManager itself.
-    implementation project(path: ':android-auto-companion-android:trustagent')
-    implementation project(path: ':android-auto-companion-android:trusteddevice')
-    implementation project(path: ':android-auto-companion-android:loggingsupport')
-    implementation project(path: ':android-auto-companion-android:connectionservice')
-    implementation project(path: ':android-auto-companion-android:communication')
-    implementation project(path: ':android-auto-companion-android:calendarsync')
+    implementation 'com.google.android.car.connectionservice:connectionservice:1.2.1'
 }

@@ -29,46 +29,12 @@ After this, the project should be buildable and deployable via XCode.
 
 ## Building Android
 
-The Android application has an addition dependency on the
-[ukey2](https://github.com/google/ukey2) project. There are several changes
-that are required to build properly.
-
-### Adding protoc dependency
-
-Add the following block of code to the
-[`build.gradle`](https://github.com/google/ukey2/blob/master/build.gradle) in
-`ukey2`:
+To set up the initial environment, navigate into the `android` directory and
+run the following:
 
 ```
-protobuf {
-    protoc {
-        artifact = 'com.google.protobuf:protoc:3.10.0'
-    }
-    generateProtoTasks {
-        all().each { task ->
-            task.builtins {
-                java {
-                    option "lite"
-                }
-            }
-        }
-    }
-}
+flutter build apk
 ```
 
-Alternatively, install `protoc` as described in
-[Protocol Buffer Compiler Installation](https://grpc.io/docs/protoc-installation/).
-
-### Fixing Google Truth dependency
-
-The `ukey2` library depends on an older version of
-[Google Truth](https://github.com/google/truth). This dependency needs to be
-updated to at least `1.1.2`. Make the following change in the
-[`build.gradle`](https://github.com/google/ukey2/blob/master/build.gradle):
-
-```
-compile group: 'com.google.truth.extensions', name: 'truth-java8-extension', version: '0.41'
-
-# Change to
-compile group: 'com.google.truth.extensions', name: 'truth-java8-extension', version: '1.1.2'
-```
+After this, the project should be buildable and deployable via
+[Android Studio](https://developer.android.com/studio).
