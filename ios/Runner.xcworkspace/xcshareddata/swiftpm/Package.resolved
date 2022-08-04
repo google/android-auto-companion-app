@@ -1,25 +1,23 @@
 {
-  "object": {
-    "pins": [
-      {
-        "package": "AndroidAutoCompanion",
-        "repositoryURL": "https://github.com/google/android-auto-companion-ios.git",
-        "state": {
-          "branch": null,
-          "revision": "7a69ef71321996d28f2b08db67104e24957a2b92",
-          "version": "1.1.0"
-        }
-      },
-      {
-        "package": "SwiftProtobuf",
-        "repositoryURL": "https://github.com/apple/swift-protobuf.git",
-        "state": {
-          "branch": null,
-          "revision": "7e2c5f3cbbeea68e004915e3a8961e20bd11d824",
-          "version": "1.18.0"
-        }
+  "pins" : [
+    {
+      "identity" : "android-auto-companion-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/google/android-auto-companion-ios.git",
+      "state" : {
+        "revision" : "6fd623e0ff242d4422ea0de1f905867746878124",
+        "version" : "2.0.1"
       }
-    ]
-  },
-  "version": 1
+    },
+    {
+      "identity" : "swift-protobuf",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-protobuf.git",
+      "state" : {
+        "revision" : "7e2c5f3cbbeea68e004915e3a8961e20bd11d824",
+        "version" : "1.18.0"
+      }
+    }
+  ],
+  "version" : 2
 }

@@ -607,7 +607,7 @@
 			repositoryURL = "https://github.com/google/android-auto-companion-ios.git";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 1.1.0;
+				minimumVersion = 2.0.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
