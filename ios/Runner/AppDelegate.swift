@@ -19,6 +19,7 @@ import UIKit
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
   private var trustedDeviceMethodChannel: TrustedDeviceMethodChannel?
+  private var calendarSyncMethodChannel: CalendarSyncMethodChannel?
 
   override func application(
     _ application: UIApplication,
@@ -29,6 +30,9 @@ import UIKit
     }
 
     trustedDeviceMethodChannel = TrustedDeviceMethodChannel(controller)
+    let connectionManager = trustedDeviceMethodChannel!.connectionManager
+    calendarSyncMethodChannel =
+      CalendarSyncMethodChannel(controller, connectionManager: connectionManager)
 
     GeneratedPluginRegistrant.register(with: self)
 

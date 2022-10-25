@@ -43,6 +43,8 @@
 	<false/>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>Allows this app to discover and connect to nearby cars.</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>To display event information on your car screen, this app needs to read your calendars</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>bluetooth-central</string>

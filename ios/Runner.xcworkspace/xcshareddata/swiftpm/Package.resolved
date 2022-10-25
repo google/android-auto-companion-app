@@ -1,12 +1,21 @@
 {
   "pins" : [
     {
+      "identity" : "android-auto-companion-calendarsync-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/google/android-auto-companion-calendarsync-ios",
+      "state" : {
+        "revision" : "df775135bc9a64dcbac3a0734ea8761bf284677d",
+        "version" : "1.0.0"
+      }
+    },
+    {
       "identity" : "android-auto-companion-ios",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/android-auto-companion-ios.git",
       "state" : {
-        "revision" : "6fd623e0ff242d4422ea0de1f905867746878124",
-        "version" : "2.0.1"
+        "revision" : "fc37082df8b38fcf37d75783cd2bdb4a55c15f7e",
+        "version" : "2.0.3"
       }
     },
     {
