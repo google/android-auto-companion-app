@@ -38,8 +38,10 @@ class CarNotConnectedDialog extends StatelessWidget {
       title: Text(strings.carNotConnectedWarningTitle),
       content: Text(strings.carNotConnectedWarningContent),
       actions: [
-        FlatButton(
-          textColor: Theme.of(context).primaryColor,
+        TextButton(
+          style: TextButton.styleFrom(
+            foregroundColor: Theme.of(context).primaryColor,
+          ),
           onPressed: Navigator.of(context).pop,
           child: Text(strings.alertDialogOkButton),
         ),

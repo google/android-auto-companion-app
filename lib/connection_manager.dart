@@ -140,20 +140,11 @@ class ConnectionManager extends MethodChannelHandler {
   ///
   /// If this value is true, then the connection manager can be used to scan for
   /// and connect to cars.
-  Future<bool> isBluetoothEnabled() {
-    return methodChannel
-        .invokeMethod<bool>(connected_device_constants.IS_BLUETOOTH_ENABLED)
-        .then((enabled) => enabled ?? false);
-  }
+  Future<bool> get isBluetoothEnabled => methodChannel
+      .invokeMethod(connected_device_constants.IS_BLUETOOTH_ENABLED);
 
-  /// Returns `true` if all the required permissions for Bluetooth have
-  /// been granted.
-  Future<bool> isBluetoothPermissionGranted() {
-    return methodChannel
-        .invokeMethod(
-            connected_device_constants.IS_BLUETOOTH_PERMISSION_GRANTED)
-        .then((isGranted) => isGranted ?? false);
-  }
+  Future<bool> get isBluetoothPermissionGranted => methodChannel
+      .invokeMethod(connected_device_constants.IS_BLUETOOTH_PERMISSION_GRANTED);
 
   /// Starts scanning for cars that are advertising, prepending the given
   /// [namePrefix] to the name of discovered cars.
@@ -173,8 +164,6 @@ class ConnectionManager extends MethodChannelHandler {
     invokeMethod(connected_device_constants.OPEN_APPLICATION_DETAILS_SETTINGS);
   }
 
-  /// Leaves the current application and navigates the user to the Bluetooth
-  /// settings on the device.
   void openBluetoothSettings() {
     invokeMethod(connected_device_constants.OPEN_BLUETOOTH_SETTINGS);
   }
@@ -212,18 +201,9 @@ class ConnectionManager extends MethodChannelHandler {
   Future<List<Car>> _invokeListMethod(String methodName) async {
     final associatedCars =
         await methodChannel.invokeListMethod<Map<dynamic, dynamic>>(methodName);
-
-    if (associatedCars == null) {
-      return [];
-    }
-
     return associatedCars
-        .map(
-          (carMap) => Car(
-            carMap[connected_device_constants.CAR_ID_KEY],
-            carMap[connected_device_constants.CAR_NAME_KEY],
-          ),
-        )
+        .map((carMap) => Car(carMap[connected_device_constants.CAR_ID_KEY],
+            carMap[connected_device_constants.CAR_NAME_KEY]))
         .toList();
   }
 

@@ -12,15 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:automotive_companion/car.dart';
-import 'package:automotive_companion/common_app_bar.dart';
-import 'package:automotive_companion/string_localizations.dart';
-import 'package:automotive_companion/trusted_device_manager.dart';
-import 'package:automotive_companion/values/dimensions.dart' as dimensions;
 import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+
+import '../car.dart';
+import '../common_app_bar.dart';
+import '../string_localizations.dart';
+import '../trusted_device_manager.dart';
+import '../values/dimensions.dart' as dimensions;
 
 const _screenBottomPadding = 15.0;
 
@@ -28,7 +29,7 @@ const _screenBottomPadding = 15.0;
 class UnlockHistoryPage extends StatefulWidget {
   final Car car;
 
-  const UnlockHistoryPage({Key? key, required this.car}) : super(key: key);
+  UnlockHistoryPage({Key key, @required this.car}) : super(key: key);
 
   @override
   State createState() => UnlockHistoryPageState();
@@ -59,7 +60,7 @@ class UnlockTimeItem implements ListItem {
 
 @visibleForTesting
 class UnlockHistoryPageState extends State<UnlockHistoryPage> {
-  late TrustedDeviceManager _trustedDeviceManager;
+  TrustedDeviceManager _trustedDeviceManager;
   final _unlockHistoryItems = <ListItem>[];
   final _dateFormatter = DateFormat.yMMMd();
   final _timeFormatter = DateFormat.jm();
@@ -125,7 +126,7 @@ class UnlockHistoryPageState extends State<UnlockHistoryPage> {
           return ListTile(
               title: Text(
             _timeFormatter.format(item.date),
-            style: Theme.of(context).textTheme.bodyText1!.apply(
+            style: Theme.of(context).textTheme.bodyText1.apply(
                   color: Theme.of(context).colorScheme.onBackground,
                 ),
           ));

@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:automotive_companion/string_localizations.dart';
 import 'package:flutter/material.dart';
+import 'string_localizations.dart';
 
 /// Creates an [AppBar] that provides consistent styling across this
 /// application.
@@ -30,7 +30,7 @@ import 'package:flutter/material.dart';
 ///
 /// Lastly, an affordance for common [actions] is exposed.
 AppBar commonAppBar(BuildContext context,
-    {String? title, VoidCallback? onBackPressed, List<Widget>? actions}) {
+    {String title, VoidCallback onBackPressed, List<Widget> actions}) {
   return AppBar(
     // Title is only centered if there is text provided.
     centerTitle: title != null,
@@ -45,7 +45,7 @@ AppBar commonAppBar(BuildContext context,
       title ?? StringLocalizations.of(context).appBarBackLabel,
       style: Theme.of(context)
           .textTheme
-          .headline6!
+          .headline6
           .copyWith(color: Theme.of(context).colorScheme.onBackground),
     ),
     actions: actions,

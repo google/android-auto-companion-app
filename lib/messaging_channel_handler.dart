@@ -19,19 +19,22 @@ import 'values/messaging_sync_constants.dart' as messaging_sync_constants;
 
 /// Method Channel Handler for Messaging Sync.
 class MessagingMethodChannelHandler {
-  final _channel = MethodChannel(messaging_sync_constants.CHANNEL);
-
-  VoidCallback? _onMessagingSyncEnabled;
-  VoidCallback? _onFailureToEnableMessagingSync;
+  var _channel = MethodChannel(messaging_sync_constants.CHANNEL);
+  Function _onMessagingSyncEnabled;
+  Function _onFailureToEnableMessagingSync;
 
   MessagingMethodChannelHandler() {
     _channel.setMethodCallHandler((call) async {
       switch (call.method) {
         case messaging_sync_constants.ON_MESSAGING_SYNC_ENABLED_ROUTE:
-          _onMessagingSyncEnabled?.call();
+          if (_onMessagingSyncEnabled != null) {
+            _onMessagingSyncEnabled();
+          }
           break;
         case messaging_sync_constants.ON_FAILURE_TO_ENABLE_MESSAGING_SYNC_ROUTE:
-          _onFailureToEnableMessagingSync?.call();
+          if (_onFailureToEnableMessagingSync != null) {
+            _onFailureToEnableMessagingSync();
+          }
           break;
         default:
           throw MissingPluginException();
@@ -40,17 +43,15 @@ class MessagingMethodChannelHandler {
   }
 
   /// Checks if messaging sync feature is enabled.
-  Future<bool> isMessagingSyncFeatureEnabled(String carId) {
-    return _channel
-        .invokeMethod(
-            messaging_sync_constants.IS_MESSAGING_SYNC_FEATURE_ENABLED, carId)
-        .then((enabled) => enabled ?? false);
+  Future<bool> isMessagingSyncFeatureEnabled(String carId) async {
+    return _channel.invokeMethod(
+        messaging_sync_constants.IS_MESSAGING_SYNC_FEATURE_ENABLED, carId);
   }
 
   /// Enables messaging sync which goes through a variety of setup flow to
   /// enable messaging sync.
-  void enableMessagingSync(String carId,
-      {VoidCallback? onSuccess, VoidCallback? onFailure}) {
+  void enableMessagingSync(
+      String carId, Function onSuccess, Function onFailure) {
     _onMessagingSyncEnabled = onSuccess;
     _onFailureToEnableMessagingSync = onFailure;
     _channel.invokeMethod(
@@ -66,9 +67,14 @@ class MessagingMethodChannelHandler {
   /// Helper method for enabling or disabling messaging sync feature.
   void setMessagingEnabled(String carId, bool enabled) {
     if (enabled) {
-      enableMessagingSync(carId, onSuccess: null, onFailure: null);
+      enableMessagingSync(carId, null, null);
     } else {
       _disableMessagingSync(carId);
     }
+  }
+
+  @visibleForTesting
+  void setMockMethodChannel(MethodChannel mockChannel) {
+    _channel = mockChannel;
   }
 }

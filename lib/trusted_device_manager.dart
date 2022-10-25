@@ -13,14 +13,11 @@
 // limitations under the License.
 
 import 'dart:developer';
-
-import 'package:automotive_companion/car.dart';
-import 'package:automotive_companion/method_channel_handler.dart';
-import 'package:automotive_companion/values/connected_device_constants.dart'
-    as connected_device_constants;
-import 'package:automotive_companion/values/trusted_device_constants.dart'
-    as trusted_device_constants;
 import 'package:flutter/services.dart';
+import 'method_channel_handler.dart';
+import 'values/trusted_device_constants.dart' as trusted_device_constants;
+import 'values/connected_device_constants.dart' as connected_device_constants;
+import 'car.dart';
 
 /// This is a singleton method channel used to communicate between the Flutter
 /// UI and phone's trust agent library. This method channel should be able to
@@ -28,7 +25,6 @@ import 'package:flutter/services.dart';
 /// platform.
 class TrustedDeviceManager extends MethodChannelHandler {
   final _trustAgentCallbacks = <TrustAgentCallback>[];
-
   TrustedDeviceManager()
       : super(MethodChannel(trusted_device_constants.CHANNEL)) {
     // Internally, the TrustedDeviceManager is the method handler.
@@ -106,15 +102,10 @@ class TrustedDeviceManager extends MethodChannelHandler {
     try {
       final unlockHistory = await methodChannel.invokeListMethod<dynamic>(
           trusted_device_constants.GET_UNLOCK_HISTORY, carToMap(car));
-
-      if (unlockHistory == null) {
-        return [];
-      }
-
       return unlockHistory.map((m) => DateTime.parse(m).toLocal()).toList();
     } on PlatformException catch (e) {
       log("Failed to fetch associated cars with error: '${e.message}'.");
-      return [];
+      return <DateTime>[];
     }
   }
 
@@ -153,6 +144,7 @@ class TrustedDeviceManager extends MethodChannelHandler {
       });
 }
 
+// LINT.IfChange
 enum UnlockStatus {
   /// The status is not known
   unknown,

@@ -31,8 +31,6 @@ import 'package:flutter/material.dart';
 /// );
 /// ```
 class AssociationErrorDialog extends StatelessWidget {
-  const AssociationErrorDialog({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     final strings = StringLocalizations.of(context);
@@ -40,7 +38,7 @@ class AssociationErrorDialog extends StatelessWidget {
       title: Text(strings.associationErrorDialogTitle),
       content: Text(strings.associationErrorDialogBody),
       actions: [
-        FlatButton(
+        TextButton(
           onPressed: Navigator.of(context).pop,
           child: Text(
             strings.associationErrorDialogConfirmButton,

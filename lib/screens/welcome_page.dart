@@ -12,15 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:automotive_companion/connection_manager.dart';
-import 'package:automotive_companion/screens/looking_for_car_page.dart';
-import 'package:automotive_companion/screens/open_settings_alert_dialog.dart';
-import 'package:automotive_companion/string_localizations.dart';
-import 'package:automotive_companion/values/dimensions.dart' as dimensions;
 import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
+
+import '../connection_manager.dart';
+import '../string_localizations.dart';
+import '../values/dimensions.dart' as dimensions;
+import 'looking_for_car_page.dart';
+import 'open_settings_alert_dialog.dart';
 
 const _featureIconSize = 48.0;
 const _featureIconBorderRadius = 8.0;
@@ -35,21 +36,19 @@ const _featureItemPadding = 10.0;
 
 /// Main page which is the association entry point.
 class WelcomePage extends StatefulWidget {
-  const WelcomePage({Key? key}) : super(key: key);
-
   @override
   State createState() => _WelcomePageState();
 }
 
 class _WelcomePageState extends State<WelcomePage> {
-  late ConnectionManager _connectionManager;
-  String? _versionNumber;
+  ConnectionManager _connectionManager;
+  String _versionNumber;
 
   /// The current Android SDK version.
   ///
   /// This value is will only be non-null if the current platform is Android.
   /// https://developer.android.com/studio/releases/platforms
-  int _androidSdk = 0;
+  int _androidSdk;
 
   @override
   void initState() {
@@ -71,6 +70,7 @@ class _WelcomePageState extends State<WelcomePage> {
     final packageInfo = await PackageInfo.fromPlatform();
     setState(() {
       _versionNumber = packageInfo.version;
+      print('version: $_versionNumber');
     });
   }
 
@@ -91,120 +91,124 @@ class _WelcomePageState extends State<WelcomePage> {
     final strings = StringLocalizations.of(context);
 
     return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Spacer(flex: _titleFlex),
+      body: Container(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Spacer(flex: _titleFlex),
 
-          // Explanation title.
-          Padding(
-            padding: EdgeInsets.only(
-              right: dimensions.titleHorizontalPadding,
-              left: dimensions.titleHorizontalPadding,
+            // Explanation title.
+            Padding(
+              padding: EdgeInsets.only(
+                right: dimensions.titleHorizontalPadding,
+                left: dimensions.titleHorizontalPadding,
+              ),
+              child: Text(
+                strings.welcomeTitle,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.headline4,
+              ),
             ),
-            child: Text(
-              strings.welcomeTitle,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ),
 
-          // Explanation text.
-          Padding(
-            padding: EdgeInsets.only(
-              top: dimensions.textSpacing,
-              right: dimensions.pageHorizontalPadding,
-              left: dimensions.pageHorizontalPadding,
+            // Explanation text.
+            Padding(
+              padding: EdgeInsets.only(
+                top: dimensions.textSpacing,
+                right: dimensions.pageHorizontalPadding,
+                left: dimensions.pageHorizontalPadding,
+              ),
+              child: Text(
+                strings.welcomeContent,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyText1,
+              ),
             ),
-            child: Text(
-              strings.welcomeContent,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyText1,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: dimensions.largeIconPadding,
-              horizontal: dimensions.pageHorizontalPadding,
-            ),
-            child: Column(
-              children: [
-                _featureLabel(
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: dimensions.largeIconPadding,
+                horizontal: dimensions.pageHorizontalPadding,
+              ),
+              child: Column(
+                children: [
+                  _featureLabel(
+                      Image(
+                        image:
+                            AssetImage('assets/images/icon_welcome_lock.png'),
+                      ),
+                      strings.trustedDeviceShortExplanation),
+                  _featureLabel(
                     Image(
-                      image: AssetImage('assets/images/icon_welcome_lock.png'),
+                        image:
+                            AssetImage('assets/images/icon_welcome_cal.png')),
+                    strings.calendarSyncShortExplanation,
+                  ),
+                  // Messenger sync feature is only available in android
+                  // devices.
+                  if (Theme.of(context).platform == TargetPlatform.android)
+                    _featureLabel(
+                      Image(
+                        image: AssetImage('assets/images/icon_welcome_msg.png'),
+                      ),
+                      strings.messengerSyncShortExplanation,
                     ),
-                    strings.trustedDeviceShortExplanation),
-                if (Theme.of(context).platform == TargetPlatform.android)
-                  ..._androidOnlyFeatures,
-              ],
+                ],
+              ),
             ),
-          ),
 
-          Spacer(flex: _featureListBottomFlex),
+            Spacer(flex: _featureListBottomFlex),
 
-          // The button to begin the process of associating a new car.
-          Container(
-            padding: EdgeInsets.only(
-              right: dimensions.pageHorizontalPadding,
-              left: dimensions.pageHorizontalPadding,
-              bottom: dimensions.textSpacing,
+            // The button to begin the process of associating a new car.
+            Container(
+              // Warning text to the user that bluetooth is required.
+              child: Container(
+                padding: const EdgeInsets.only(
+                  right: dimensions.pageHorizontalPadding,
+                  left: dimensions.pageHorizontalPadding,
+                  bottom: dimensions.textSpacing,
+                ),
+                child: Text(
+                  strings.bluetoothRequirementExplanation,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodyText2,
+                ),
+              ),
             ),
-            child: Text(
-              strings.bluetoothRequirementExplanation,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyText2,
+            ButtonTheme(
+              height: dimensions.actionButtonHeight,
+              minWidth: dimensions.actionButtonWidth,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Theme.of(context).colorScheme.background,
+                  shape: RoundedRectangleBorder(
+                borderRadius:
+                BorderRadius.circular(dimensions.actionButtonRadius)),
+                ),
+                onPressed: () async {
+                  if (await _connectionManager.isBluetoothPermissionGranted) {
+                    await Navigator.push(context,
+                        MaterialPageRoute(builder: (_) => LookingForCarPage()));
+                    return;
+                  }
+                  _showBluetoothPermissionDialog();
+                },
+                child: Text(strings.getStartedButtonLabel),
+              ),
             ),
-          ),
-          ButtonTheme(
-            height: dimensions.actionButtonHeight,
-            minWidth: dimensions.actionButtonWidth,
-            child: RaisedButton(
-              textColor: Theme.of(context).colorScheme.background,
-              shape: RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(dimensions.actionButtonRadius)),
-              onPressed: () async {
-                if (await _connectionManager.isBluetoothPermissionGranted()) {
-                  await Navigator.push(context,
-                      MaterialPageRoute(builder: (_) => LookingForCarPage()));
-                  return;
-                }
-                _showBluetoothPermissionDialog();
-              },
-              child: Text(strings.getStartedButtonLabel),
-            ),
-          ),
 
-          Spacer(flex: _versionCodeTopFlex),
+            Spacer(flex: _versionCodeTopFlex),
 
-          if (_versionNumber != null) _versionNumberText(screenHeight),
-        ],
+            if (_versionNumber != null) _versionNumberText(screenHeight),
+          ],
+        ),
       ),
     );
-  }
-
-  List<Widget> get _androidOnlyFeatures {
-    final strings = StringLocalizations.of(context);
-    return [
-      _featureLabel(
-        Image(
-          image: AssetImage('assets/images/icon_welcome_cal.png'),
-        ),
-        strings.calendarSyncShortExplanation,
-      ),
-      _featureLabel(
-        Image(
-          image: AssetImage('assets/images/icon_welcome_msg.png'),
-        ),
-        strings.messengerSyncShortExplanation,
-      ),
-    ];
   }
 
   /// A widget that displays the current version of the application.
   Widget _versionNumberText(double screenHeight) {
     final strings = StringLocalizations.of(context);
+
     return Padding(
       padding: EdgeInsets.only(
         top: screenHeight > _screenHeightPaddingBreakPoint
@@ -213,10 +217,10 @@ class _WelcomePageState extends State<WelcomePage> {
         bottom: dimensions.textSpacing,
       ),
       child: Text(
-        strings.versionNumberLabel(_versionNumber ?? ''),
+        strings.versionNumberLabel(_versionNumber),
         style: Theme.of(context)
             .textTheme
-            .caption!
+            .caption
             .apply(color: Theme.of(context).colorScheme.onSecondary),
       ),
     );

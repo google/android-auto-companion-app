@@ -12,21 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:automotive_companion/car.dart';
 import 'package:automotive_companion/screens/trusted_device_intro_page.dart';
 import 'package:automotive_companion/screens/trusted_device_settings_page.dart';
-import 'package:automotive_companion/string_localizations.dart';
-import 'package:automotive_companion/trusted_device_manager.dart';
-import 'package:automotive_companion/widgets/feature_item.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import '../car.dart';
+import '../string_localizations.dart';
+import '../trusted_device_manager.dart';
+import 'feature_item.dart';
 
 /// Feature item that handles the trusted device feature for the given
 /// [currentCar].
 class TrustedDeviceFeatureItem extends StatefulWidget {
   final Car currentCar;
 
-  const TrustedDeviceFeatureItem({Key? key, required this.currentCar})
+  TrustedDeviceFeatureItem({Key key, @required this.currentCar})
       : super(key: key);
 
   @override
@@ -36,8 +37,9 @@ class TrustedDeviceFeatureItem extends StatefulWidget {
 @visibleForTesting
 class TrustedDeviceFeatureItemState extends State<TrustedDeviceFeatureItem>
     implements TrustAgentCallback {
-  late Car _currentCar;
-  late TrustedDeviceManager _trustedDeviceManager;
+  Car _currentCar;
+
+  TrustedDeviceManager _trustedDeviceManager;
 
   var _isTrustedDeviceEnabled = false;
 

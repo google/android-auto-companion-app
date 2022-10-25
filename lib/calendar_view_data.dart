@@ -24,7 +24,7 @@ class CalendarViewData {
   final String title;
 
   /// The color of this calendar.
-  final Color? color;
+  final Color color;
 
   /// The name of the account that owns this calendar.
   ///
@@ -34,30 +34,30 @@ class CalendarViewData {
   /// Whether the calendar should be marked in the UI as selected.
   bool isSelected = false;
 
-  CalendarViewData(this.id, this.title, this.color, this.account);
+  // TODO(jdp) Make all parameters required.
+  CalendarViewData(this.id, this.title, [this.color, this.account]);
 
   CalendarViewData.fromJson(Map<String, dynamic> json)
       : this(
-          json['id'],
-          json['title'],
-          json['color'] != null ? Color(json['color']) : null,
-          json['account'],
-        );
+            json['id'],
+            json['title'],
+            json['color'] != null ? Color(json['color']) : null,
+            json['account']);
 
   Map<String, dynamic> toJson() => {
         'id': id,
         'title': title,
-        'color': color?.value,
+        'color': color != null ? color.value : null,
         'account': account,
       };
 
   @override
-  bool operator ==(other) =>
-      other is CalendarViewData &&
-      other.id == id &&
-      other.title == title &&
-      other.color == color &&
-      other.account == account;
+  bool operator ==(o) =>
+      o is CalendarViewData &&
+      o.id == id &&
+      o.title == title &&
+      o.color == color &&
+      o.account == account;
 
   @override
   int get hashCode => hashValues(title, id, color, account);

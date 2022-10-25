@@ -12,9 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:automotive_companion/string_localizations.dart';
-import 'package:automotive_companion/values/dimensions.dart' as dimensions;
 import 'package:flutter/material.dart';
+
+import '../string_localizations.dart';
+import '../values/dimensions.dart' as dimensions;
 
 const _verticalPadding = 25.0;
 const _horizontalPadding = 16.0;
@@ -32,14 +33,20 @@ class FeatureItem extends StatelessWidget {
   final bool enabled;
   final VoidCallback onTap;
 
-  const FeatureItem({
-    Key? key,
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.enabled,
-    required this.onTap,
-  }) : super(key: key);
+  FeatureItem({
+    Key key,
+    @required this.icon,
+    @required this.title,
+    @required this.subtitle,
+    @required this.enabled,
+    @required this.onTap,
+  }) : super(key: key) {
+    assert(icon != null);
+    assert(title != null);
+    assert(subtitle != null);
+    assert(enabled != null);
+    assert(onTap != null);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +70,7 @@ class FeatureItem extends StatelessWidget {
   Widget _contentRow(BuildContext context) {
     final baseSubtitleStyle = Theme.of(context).textTheme.bodyText2;
     final subtitleStyle = enabled
-        ? baseSubtitleStyle?.apply(color: Colors.green[300])
+        ? baseSubtitleStyle.apply(color: Colors.green[300])
         : baseSubtitleStyle;
 
     return Row(
@@ -83,7 +90,7 @@ class FeatureItem extends StatelessWidget {
                 title,
                 style: Theme.of(context)
                     .textTheme
-                    .bodyText1!
+                    .bodyText1
                     .apply(color: Theme.of(context).colorScheme.onBackground),
               ),
               Text(

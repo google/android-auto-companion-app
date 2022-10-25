@@ -12,22 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:automotive_companion/car.dart';
-import 'package:automotive_companion/common_app_bar.dart';
-import 'package:automotive_companion/screens/messaging_notification_access_info.dart';
-import 'package:automotive_companion/string_localizations.dart';
-import 'package:automotive_companion/values/dimensions.dart' as dimensions;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+
+import '../car.dart';
+import '../common_app_bar.dart';
+import '../string_localizations.dart';
+import '../values/dimensions.dart' as dimensions;
+import 'messaging_notification_access_info.dart';
 
 /// Main Page introducing the Text/MMS Messaging Feature.
 class MessagingFeatureIntroPage extends StatelessWidget {
   final Car car;
 
-  const MessagingFeatureIntroPage({Key? key, required this.car})
-      : super(key: key);
+  MessagingFeatureIntroPage({this.car}) : super();
 
   void _navigateTo(BuildContext context, Widget widget) async {
+    if (context == null) {
+      return;
+    }
     await Navigator.pushReplacement(
       context,
       MaterialPageRoute(
@@ -98,9 +101,18 @@ class MessagingFeatureIntroPage extends StatelessWidget {
               padding: EdgeInsets.symmetric(
                 horizontal: dimensions.pageHorizontalPadding,
               ),
-              child: RaisedButton(
-                textColor: Theme.of(context).colorScheme.onPrimary,
-                splashColor: Theme.of(context).primaryColorLight,
+              child: ElevatedButton(
+                style: ButtonStyle(
+                  foregroundColor: MaterialStateProperty.all(
+                      Theme.of(context).colorScheme.onPrimary),
+                  overlayColor: MaterialStateProperty.resolveWith<Color>(
+                          (Set<MaterialState> states) {
+                        if (states.contains(MaterialState.pressed)) {
+                          return Theme.of(context).primaryColorLight;
+                        }
+                        return null; // Defer to the widget's default.
+                      }),
+                ),
                 onPressed: () {
                   _navigateTo(
                       context, MessagingNotificationAccessInfoPage(car: car));

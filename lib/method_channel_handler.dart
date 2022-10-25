@@ -14,10 +14,12 @@
 
 import 'dart:developer';
 
-import 'package:automotive_companion/car.dart';
-import 'package:automotive_companion/values/connected_device_constants.dart'
-    as connected_device_constants;
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'values/connected_device_constants.dart' as connected_device_constants;
+import 'package:meta/meta.dart' show visibleForTesting;
+
+import 'car.dart';
 
 /// Helper class which provide functions handling flutter method call with
 /// input of certain format.
@@ -26,10 +28,10 @@ abstract class MethodChannelHandler {
   MethodChannelHandler(this.methodChannel);
 
   /// Call method on the native platform.
-  void invokeMethod(String methodName, [String? parameters]) async {
-    log('calling $methodName with parameter: $parameters');
+  void invokeMethod(String methodName, [String parameter]) async {
+    log('calling $methodName with parameter: $parameter');
     try {
-      await methodChannel.invokeMethod<bool>(methodName, parameters);
+      await methodChannel.invokeMethod<bool>(methodName, parameter);
     } on PlatformException catch (e) {
       log("Failed to invoke method: '${e.message}'.");
     }
@@ -58,4 +60,9 @@ abstract class MethodChannelHandler {
         call.arguments[connected_device_constants.CAR_ID_KEY],
         call.arguments[connected_device_constants.CAR_NAME_KEY],
       );
+
+  @visibleForTesting
+  void setMockMethodChannel(MethodChannel mockChannel) {
+    methodChannel = mockChannel;
+  }
 }

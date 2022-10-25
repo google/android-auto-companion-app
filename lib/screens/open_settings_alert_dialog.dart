@@ -12,11 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:automotive_companion/connection_manager.dart';
-import 'package:automotive_companion/string_localizations.dart';
 import 'package:automotive_companion/trusted_device_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import '../connection_manager.dart';
+import '../string_localizations.dart';
+import '../trusted_device_manager.dart';
 
 /// An [AlertDialog] providing a way to open the platform-specific application
 /// settings on the mobile device.
@@ -39,12 +41,12 @@ import 'package:provider/provider.dart';
 /// ```
 @visibleForTesting
 class OpenSettingsAlertDialog extends StatelessWidget {
-  const OpenSettingsAlertDialog({
-    Key? key,
-    required this.title,
-    required this.content,
-    required this.onCancelPressed,
-    required this.onOpenPressed,
+  OpenSettingsAlertDialog({
+    Key key,
+    @required this.title,
+    @required this.content,
+    @required this.onCancelPressed,
+    @required this.onOpenPressed,
   }) : super(key: key);
 
   /// The title of the dialog is displayed in a large font at the top of the
@@ -68,12 +70,12 @@ class OpenSettingsAlertDialog extends StatelessWidget {
       title: Text(title, style: Theme.of(context).textTheme.headline5),
       content: Text(content),
       actions: [
-        FlatButton(
+        TextButton(
           onPressed: onCancelPressed,
           child: Text(StringLocalizations.of(context).cancelButtonLabel,
               style: Theme.of(context).textTheme.button),
         ),
-        FlatButton(
+        TextButton(
           onPressed: onOpenPressed,
           child: Text(StringLocalizations.of(context).openSettingsLabel,
               style: Theme.of(context).textTheme.button),
@@ -87,11 +89,10 @@ class OpenSettingsAlertDialog extends StatelessWidget {
 /// enable opening different pages according to different requirements.
 class OpenSettingsAlert {
   /// Shows an [OpenSettingsAlertDialog] about missing permissions.
-  static Future<void> showRequestingPermissionsDialog({
-    required BuildContext context,
-    required String title,
-    required String content,
-  }) async {
+  static Future<void> showRequestingPermissionsDialog(
+      {@required BuildContext context,
+      @required String title,
+      @required String content}) async {
     // Require dialog to be explicitly dismissed by clicking the "Cancel"
     // button. This is because the dialog will trigger a navigation away from
     // this page. It can be jarring to users if the dialog is accidentally
@@ -113,10 +114,9 @@ class OpenSettingsAlert {
   }
 
   /// Shows an [OpenSettingsAlertDialog] about unset passcode.
-  static Future<void> showPasscodeAlert({
-    required BuildContext context,
-    required VoidCallback onCancelPressed,
-  }) async {
+  static Future<void> showPasscodeAlert(
+      {@required BuildContext context,
+      @required VoidCallback onCancelPressed}) async {
     final strings = StringLocalizations.of(context);
 
     // Require dialog to be explicitly dismissed by clicking the "Cancel"

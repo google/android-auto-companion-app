@@ -14,18 +14,19 @@
 
 import 'dart:async';
 
-import 'package:automotive_companion/car.dart';
-import 'package:automotive_companion/common_app_bar.dart';
-import 'package:automotive_companion/connection_manager.dart';
-import 'package:automotive_companion/screens/association_error_dialog.dart';
-import 'package:automotive_companion/screens/bluetooth_warning_page.dart';
-import 'package:automotive_companion/screens/car_details_page.dart';
-import 'package:automotive_companion/screens/pairing_code_page.dart';
-import 'package:automotive_companion/string_localizations.dart';
-import 'package:automotive_companion/values/bluetooth_state.dart';
-import 'package:automotive_companion/values/dimensions.dart' as dimensions;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import '../car.dart';
+import '../common_app_bar.dart';
+import '../connection_manager.dart';
+import '../string_localizations.dart';
+import '../values/bluetooth_state.dart';
+import '../values/dimensions.dart' as dimensions;
+import 'association_error_dialog.dart';
+import 'bluetooth_warning_page.dart';
+import 'car_details_page.dart';
+import 'pairing_code_page.dart';
 
 /// Maximum amount of time to wait for connection to succeed before prompting
 /// the user to try again.
@@ -37,8 +38,6 @@ const connectionTimeout = Duration(seconds: 8);
 /// The connection completes under the hood then waits for the pairing code to
 /// be generated.
 class ConnectingPage extends StatefulWidget {
-  const ConnectingPage({Key? key}) : super(key: key);
-
   @override
   State createState() => ConnectingState();
 }
@@ -46,8 +45,8 @@ class ConnectingPage extends StatefulWidget {
 @visibleForTesting
 class ConnectingState extends State<ConnectingPage>
     implements AssociationCallback, ConnectionCallback {
-  late ConnectionManager _connectionManager;
-  Timer? _connectionTimeoutTimer;
+  ConnectionManager _connectionManager;
+  Timer _connectionTimeoutTimer;
   bool _showRetry = false;
 
   @override
@@ -164,8 +163,10 @@ class ConnectingState extends State<ConnectingPage>
         ),
         Padding(
           padding: EdgeInsets.only(top: dimensions.textSpacing),
-          child: FlatButton(
-            textColor: Theme.of(context).primaryColor,
+          child: TextButton(
+            style: TextButton.styleFrom(
+              foregroundColor: Theme.of(context).primaryColor,
+            ),
             onPressed: _cancelAssociationAndNavigateBack,
             child: Text(StringLocalizations.of(context).connectionRetryButton),
           ),

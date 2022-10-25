@@ -12,18 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:automotive_companion/car.dart';
-import 'package:automotive_companion/common_app_bar.dart';
-import 'package:automotive_companion/connection_manager.dart';
-import 'package:automotive_companion/screens/bluetooth_warning_page.dart';
-import 'package:automotive_companion/screens/connecting_to_car_page.dart';
-import 'package:automotive_companion/string_localizations.dart';
-import 'package:automotive_companion/values/bluetooth_state.dart';
-import 'package:automotive_companion/values/dimensions.dart' as dimensions;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
+
+import '../car.dart';
+import '../common_app_bar.dart';
+import '../connection_manager.dart';
+import '../string_localizations.dart';
+import '../values/bluetooth_state.dart';
+import '../values/dimensions.dart' as dimensions;
+import 'bluetooth_warning_page.dart';
+import 'connecting_to_car_page.dart';
 
 const _buttonHorizontalPadding = 24.0;
 
@@ -34,8 +35,7 @@ const _buttonHorizontalPadding = 24.0;
 class OneCarFoundPage extends StatefulWidget {
   final carToConnect;
 
-  const OneCarFoundPage({Key? key, @required this.carToConnect})
-      : super(key: key);
+  OneCarFoundPage({Key key, @required this.carToConnect}) : super(key: key);
 
   @override
   State createState() => OneCarFoundPageState();
@@ -44,7 +44,7 @@ class OneCarFoundPage extends StatefulWidget {
 @visibleForTesting
 class OneCarFoundPageState extends State<OneCarFoundPage>
     implements ConnectionCallback, DiscoveryCallback {
-  late ConnectionManager _connectionManager;
+  ConnectionManager _connectionManager;
 
   @override
   void initState() {
@@ -113,13 +113,17 @@ class OneCarFoundPageState extends State<OneCarFoundPage>
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    FlatButton(
-                      textColor: Theme.of(context).primaryColor,
+                    TextButton(
+                      style: TextButton.styleFrom(
+                        foregroundColor: Theme.of(context).primaryColor,
+                      ),
                       onPressed: _navigateBack,
                       child: Text(strings.notMyCarButtonLabel),
                     ),
-                    RaisedButton(
-                      textColor: Theme.of(context).colorScheme.background,
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Theme.of(context).colorScheme.background,
+                      ),
                       onPressed: () {
                         _connectionManager.associateCar(widget.carToConnect.id);
                         Navigator.pushReplacement(

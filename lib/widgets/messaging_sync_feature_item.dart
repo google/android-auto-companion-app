@@ -17,16 +17,17 @@ import 'package:automotive_companion/messaging_channel_handler.dart';
 import 'package:automotive_companion/screens/messaging_feature_intro_page.dart';
 import 'package:automotive_companion/screens/messaging_setup_page.dart';
 import 'package:automotive_companion/string_localizations.dart';
-import 'package:automotive_companion/widgets/feature_item.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import 'feature_item.dart';
 
 /// Feature item that handles the messaging sync feature for the given
 /// [currentCar].
 class MessagingSyncFeatureItem extends StatefulWidget {
   final Car currentCar;
 
-  const MessagingSyncFeatureItem({Key? key, required this.currentCar})
+  MessagingSyncFeatureItem({Key key, @required this.currentCar})
       : super(key: key);
 
   @override
@@ -34,9 +35,9 @@ class MessagingSyncFeatureItem extends StatefulWidget {
 }
 
 class _MessagingSyncFeatureItemState extends State<MessagingSyncFeatureItem> {
-  late MessagingMethodChannelHandler _messagingChannelHandler;
-  late Car _currentCar;
+  MessagingMethodChannelHandler _messagingChannelHandler;
   var _isMessagingSyncFeatureEnabled = false;
+  Car _currentCar;
 
   @override
   void initState() {
@@ -48,7 +49,7 @@ class _MessagingSyncFeatureItemState extends State<MessagingSyncFeatureItem> {
     // The status of messaging sync only needs be triggered once. However, this
     // call is dependent on the BuildContext of this page, so wrap in a
     // PostFrameCallback to ensure it is available.
-    WidgetsBinding.instance!
+    WidgetsBinding.instance
         .addPostFrameCallback((_) => _updateMessagingSyncStatus());
   }
 

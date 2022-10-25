@@ -12,23 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:automotive_companion/car.dart';
-import 'package:automotive_companion/common_app_bar.dart';
-import 'package:automotive_companion/messaging_channel_handler.dart';
-import 'package:automotive_companion/screens/car_details_page.dart';
-import 'package:automotive_companion/string_localizations.dart';
-import 'package:automotive_companion/values/dimensions.dart' as dimensions;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import '../car.dart';
+import '../common_app_bar.dart';
+import '../messaging_channel_handler.dart';
+import '../screens/car_details_page.dart';
+import '../string_localizations.dart';
+import '../values/dimensions.dart' as dimensions;
 
 /// Main Page introducing the need for Notification access.
 class MessagingNotificationAccessInfoPage extends StatelessWidget {
   final Car car;
 
-  const MessagingNotificationAccessInfoPage({Key? key, required this.car})
-      : super(key: key);
+  MessagingNotificationAccessInfoPage({this.car}) : super();
 
   void _navigateTo(BuildContext context, Widget widget) async {
+    if (context == null) {
+      return;
+    }
     await Navigator.pushReplacement(
       context,
       MaterialPageRoute(
@@ -80,18 +83,25 @@ class MessagingNotificationAccessInfoPage extends StatelessWidget {
               padding: EdgeInsets.symmetric(
                 horizontal: dimensions.pageHorizontalPadding,
               ),
-              child: RaisedButton(
-                textColor: Theme.of(context).colorScheme.onPrimary,
-                splashColor: Theme.of(context).primaryColorLight,
+              child: ElevatedButton(
+                style: ButtonStyle(
+                  foregroundColor: MaterialStateProperty.all(
+                      Theme.of(context).colorScheme.onPrimary),
+                  overlayColor: MaterialStateProperty.resolveWith<Color>(
+                          (Set<MaterialState> states) {
+                        if (states.contains(MaterialState.pressed)) {
+                          return Theme.of(context).primaryColorLight;
+                        }
+                        return null; // Defer to the widget's default.
+                      }),
+                ),
                 onPressed: () {
-                  onSuccess() {
-                    _navigateTo(context, CarDetailsPage(currentCar: car));
-                  }
+                  Function onSuccess = () =>
+                      _navigateTo(context, CarDetailsPage(currentCar: car));
 
                   Provider.of<MessagingMethodChannelHandler>(context,
                           listen: false)
-                      .enableMessagingSync(car.id,
-                          onSuccess: onSuccess, onFailure: null);
+                      .enableMessagingSync(car.id, onSuccess, null);
                 },
                 child: Text(strings.actionContinue),
               ),

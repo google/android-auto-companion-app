@@ -15,17 +15,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import 'package:automotive_companion/car.dart';
-import 'package:automotive_companion/common_app_bar.dart';
-import 'package:automotive_companion/string_localizations.dart';
-import 'package:automotive_companion/values/dimensions.dart' as dimensions;
-import 'package:automotive_companion/screens/trusted_device_configuration_page.dart';
+import '../car.dart';
+import '../common_app_bar.dart';
+import '../string_localizations.dart';
+import '../values/dimensions.dart' as dimensions;
+import 'trusted_device_configuration_page.dart';
 
 /// Page introducing the Trusted Device Feature.
 class TrustedDeviceIntroPage extends StatelessWidget {
   final Car associatedCar;
 
-  const TrustedDeviceIntroPage({Key? key, required this.associatedCar}) : super(key: key);
+  TrustedDeviceIntroPage({Key key, this.associatedCar}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -76,11 +76,13 @@ class TrustedDeviceIntroPage extends StatelessWidget {
             ButtonTheme(
               height: dimensions.actionButtonHeight,
               minWidth: dimensions.actionButtonWidth,
-              child: RaisedButton(
-                textColor: Theme.of(context).colorScheme.background,
-                shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(dimensions.actionButtonRadius)),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Theme.of(context).colorScheme.background,
+                  shape: RoundedRectangleBorder(
+                      borderRadius:
+                      BorderRadius.circular(dimensions.actionButtonRadius)),
+                ),
                 onPressed: () {
                   Navigator.pushReplacement(
                       context,

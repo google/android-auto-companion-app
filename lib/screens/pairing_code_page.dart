@@ -12,18 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:automotive_companion/car.dart';
-import 'package:automotive_companion/common_app_bar.dart';
-import 'package:automotive_companion/connection_manager.dart';
-import 'package:automotive_companion/screens/association_error_dialog.dart';
-import 'package:automotive_companion/screens/bluetooth_warning_page.dart';
-import 'package:automotive_companion/screens/car_details_page.dart';
-import 'package:automotive_companion/string_localizations.dart';
-import 'package:automotive_companion/values/bluetooth_state.dart';
-import 'package:automotive_companion/values/dimensions.dart' as dimensions;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import '../car.dart';
+import '../common_app_bar.dart';
+import '../connection_manager.dart';
+import '../string_localizations.dart';
+import '../values/bluetooth_state.dart';
+import '../values/dimensions.dart' as dimensions;
+import 'association_error_dialog.dart';
+import 'bluetooth_warning_page.dart';
+import 'car_details_page.dart';
 
 const _pinLetterSpacing = 8.0;
 const _pinVerticalPadding = 12.0;
@@ -40,8 +41,7 @@ const _spacerBottomFlex = 3;
 /// device.
 class PairingCodePage extends StatefulWidget {
   final String pairCode;
-
-  const PairingCodePage({Key? key, required this.pairCode}) : super(key: key);
+  PairingCodePage({Key key, @required this.pairCode}) : super(key: key);
 
   @override
   State createState() => PairingCodePageState();
@@ -49,7 +49,7 @@ class PairingCodePage extends StatefulWidget {
 
 class PairingCodePageState extends State<PairingCodePage>
     implements AssociationCallback, ConnectionCallback {
-  late ConnectionManager _connectionManager;
+  ConnectionManager _connectionManager;
 
   @override
   void initState() {
@@ -150,7 +150,7 @@ class PairingCodePageState extends State<PairingCodePage>
                     BoxDecoration(color: Theme.of(context).colorScheme.surface),
                 child: Text(widget.pairCode,
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.headline3!.copyWith(
+                    style: Theme.of(context).textTheme.headline3.copyWith(
                         color: Theme.of(context).primaryColor,
                         letterSpacing: _pinLetterSpacing)),
               ),

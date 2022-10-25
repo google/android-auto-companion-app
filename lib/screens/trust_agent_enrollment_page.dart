@@ -14,17 +14,18 @@
 
 import 'dart:async';
 
-import 'package:automotive_companion/car.dart';
-import 'package:automotive_companion/common_app_bar.dart';
-import 'package:automotive_companion/screens/car_not_connected_dialog.dart';
-import 'package:automotive_companion/screens/open_settings_alert_dialog.dart';
-import 'package:automotive_companion/screens/trust_agent_error_page.dart';
-import 'package:automotive_companion/string_localizations.dart';
-import 'package:automotive_companion/trusted_device_manager.dart';
-import 'package:automotive_companion/values/dimensions.dart' as dimensions;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
+
+import '../car.dart';
+import '../common_app_bar.dart';
+import '../string_localizations.dart';
+import '../trusted_device_manager.dart';
+import '../values/dimensions.dart' as dimensions;
+import 'car_not_connected_dialog.dart';
+import 'open_settings_alert_dialog.dart';
+import 'trust_agent_error_page.dart';
 
 /// How long to wait for a response from the car before prompting the user with
 /// a button to retry association.
@@ -35,7 +36,7 @@ const _loadingTextVerticalPadding = 10.0;
 class TrustAgentEnrollmentPage extends StatefulWidget {
   final Car associatedCar;
 
-  const TrustAgentEnrollmentPage({Key? key, required this.associatedCar})
+  TrustAgentEnrollmentPage({Key key, @required this.associatedCar})
       : super(key: key);
 
   @override
@@ -44,11 +45,11 @@ class TrustAgentEnrollmentPage extends StatefulWidget {
 
 class TrustAgentEnrollmentState extends State<TrustAgentEnrollmentPage>
     implements TrustAgentCallback {
-  late TrustedDeviceManager _trustedDeviceManager;
+  TrustedDeviceManager _trustedDeviceManager;
 
   /// A timer that starts after an enrolment has started and determines when a
   /// retry button should be shown.
-  Timer? _retryTimer;
+  Timer _retryTimer;
   bool _showRetryButton = false;
 
   /// `true` if the user has issued a request to retry enrollment.
@@ -143,8 +144,10 @@ class TrustAgentEnrollmentState extends State<TrustAgentEnrollmentPage>
       padding: EdgeInsets.symmetric(
         horizontal: dimensions.pageHorizontalPadding,
       ),
-      child: FlatButton(
-        textColor: Theme.of(context).primaryColor,
+      child:  TextButton(
+        style: TextButton.styleFrom(
+          foregroundColor: Theme.of(context).primaryColor,
+        ),
         onPressed: () async {
           _trustedDeviceManager.stopTrustAgentEnrollment(widget.associatedCar);
           _trustedDeviceManager.enrollTrustAgent(widget.associatedCar);

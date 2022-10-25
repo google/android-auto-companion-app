@@ -12,17 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:automotive_companion/car.dart';
-import 'package:automotive_companion/common_app_bar.dart';
-import 'package:automotive_companion/connection_manager.dart';
-import 'package:automotive_companion/screens/bluetooth_warning_page.dart';
-import 'package:automotive_companion/screens/connecting_to_car_page.dart';
-import 'package:automotive_companion/string_localizations.dart';
-import 'package:automotive_companion/values/bluetooth_state.dart';
-import 'package:automotive_companion/values/dimensions.dart' as dimensions;
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart' show visibleForTesting;
 import 'package:provider/provider.dart';
+
+import '../car.dart';
+import '../common_app_bar.dart';
+import '../connection_manager.dart';
+import '../string_localizations.dart';
+import '../values/bluetooth_state.dart';
+import '../values/dimensions.dart' as dimensions;
+import 'bluetooth_warning_page.dart';
+import 'connecting_to_car_page.dart';
 
 const _carVerticalPadding = 10.0;
 const _carListTopPadding = 64.0;
@@ -32,8 +33,7 @@ class SelectCarPage extends StatefulWidget {
   /// A list of cars that can be associated with.
   final discoveredCars;
 
-  const SelectCarPage({Key? key, required this.discoveredCars})
-      : super(key: key);
+  SelectCarPage({Key key, @required this.discoveredCars}) : super(key: key);
 
   @override
   State createState() => SelectCarPageState();
@@ -42,7 +42,7 @@ class SelectCarPage extends StatefulWidget {
 @visibleForTesting
 class SelectCarPageState extends State<SelectCarPage>
     implements ConnectionCallback, DiscoveryCallback {
-  late ConnectionManager _connectionManager;
+  ConnectionManager _connectionManager;
   final _discoveredCars = <Car>{};
 
   @override
@@ -130,8 +130,10 @@ class SelectCarPageState extends State<SelectCarPage>
 
               Padding(
                 padding: EdgeInsets.only(top: dimensions.textSpacing),
-                child: FlatButton(
-                  textColor: Theme.of(context).primaryColor,
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    foregroundColor: Theme.of(context).primaryColor,
+                  ),
                   onPressed: _refreshList,
                   child: Text(strings.refreshCarListButtonLabel),
                 ),
@@ -187,7 +189,7 @@ class SelectCarPageState extends State<SelectCarPage>
                 car.name,
                 style: Theme.of(context)
                     .textTheme
-                    .bodyText1!
+                    .bodyText1
                     .apply(color: Theme.of(context).colorScheme.onBackground),
               ),
             ),

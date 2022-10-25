@@ -12,21 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:automotive_companion/common_app_bar.dart';
-import 'package:automotive_companion/messaging_channel_handler.dart';
-import 'package:automotive_companion/screens/on_off_button.dart';
-import 'package:automotive_companion/string_localizations.dart';
-import 'package:automotive_companion/values/dimensions.dart' as dimensions;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import '../common_app_bar.dart';
+import '../messaging_channel_handler.dart';
+import '../string_localizations.dart';
+import '../values/dimensions.dart' as dimensions;
+import 'on_off_button.dart';
 
 /// Main page which is the messaging setup page.
 class MessagingSetupPage extends StatefulWidget {
   final bool messagingSyncEnabled;
   final String carId;
-
-  const MessagingSetupPage(
-      {Key? key, required this.messagingSyncEnabled, required this.carId})
+  MessagingSetupPage(
+      {Key key, @required this.messagingSyncEnabled, @required this.carId})
       : super(key: key);
 
   @override
@@ -35,7 +35,7 @@ class MessagingSetupPage extends StatefulWidget {
 }
 
 class _MessagingSettingState extends State<MessagingSetupPage> {
-  late MessagingMethodChannelHandler _channelHandler;
+  MessagingMethodChannelHandler _channelHandler;
   bool _messagingSyncEnabled = false;
 
   _MessagingSettingState(bool messagingSyncEnabled) {

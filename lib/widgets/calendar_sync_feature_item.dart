@@ -17,16 +17,17 @@ import 'package:automotive_companion/car.dart';
 import 'package:automotive_companion/screens/calendar_intro_page.dart';
 import 'package:automotive_companion/screens/calendar_page.dart';
 import 'package:automotive_companion/string_localizations.dart';
-import 'package:automotive_companion/widgets/feature_item.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import 'feature_item.dart';
 
 /// Feature item that handles the calendar sync feature for the given
 /// [currentCar].
 class CalendarSyncFeatureItem extends StatefulWidget {
   final Car currentCar;
 
-  const CalendarSyncFeatureItem({Key? key, required this.currentCar})
+  CalendarSyncFeatureItem({Key key, @required this.currentCar})
       : super(key: key);
 
   @override
@@ -34,9 +35,8 @@ class CalendarSyncFeatureItem extends StatefulWidget {
 }
 
 class _CalendarSyncFeatureItemState extends State<CalendarSyncFeatureItem> {
-  late CalendarSyncService _calendarSyncService;
-  late Car _currentCar;
-
+  CalendarSyncService _calendarSyncService;
+  Car _currentCar;
   var _isCalendarSyncFeatureEnabled = false;
 
   @override

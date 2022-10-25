@@ -12,15 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:automotive_companion/calendar_sync_service.dart';
-import 'package:automotive_companion/car.dart';
-import 'package:automotive_companion/common_app_bar.dart';
-import 'package:automotive_companion/screens/calendar_page.dart';
-import 'package:automotive_companion/screens/open_settings_alert_dialog.dart';
-import 'package:automotive_companion/string_localizations.dart';
-import 'package:automotive_companion/values/dimensions.dart' as dimensions;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import '../calendar_sync_service.dart';
+import '../car.dart';
+import '../common_app_bar.dart';
+import '../string_localizations.dart';
+import '../values/dimensions.dart' as dimensions;
+import 'calendar_page.dart';
+import 'open_settings_alert_dialog.dart';
 
 /// Page introducing the Calendar Sync Feature.
 ///
@@ -30,14 +31,14 @@ import 'package:provider/provider.dart';
 class CalendarIntroPage extends StatefulWidget {
   final Car car;
 
-  const CalendarIntroPage({Key? key, required this.car}) : super(key: key);
+  CalendarIntroPage({Key key, @required this.car}) : super(key: key);
 
   @override
   State createState() => _CalendarIntroPageState();
 }
 
 class _CalendarIntroPageState extends State<CalendarIntroPage> {
-  late CalendarSyncService _calendarSyncService;
+  CalendarSyncService _calendarSyncService;
 
   @override
   void initState() {
@@ -99,8 +100,10 @@ class _CalendarIntroPageState extends State<CalendarIntroPage> {
                         right: dimensions.pageHorizontalPadding,
                         bottom: dimensions.pageBottomPadding,
                       ),
-                      child: RaisedButton(
-                        textColor: Theme.of(context).colorScheme.background,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Theme.of(context).colorScheme.background,
+                        ),
                         onPressed: _requestPermissionsAndProceed,
                         child: Text(strings.calendarFeatureIntroButtonText),
                       ),
@@ -120,6 +123,7 @@ class _CalendarIntroPageState extends State<CalendarIntroPage> {
     // Permission has not been granted for this page to show.
     if (!await _calendarSyncService.requestPermissions()) {
       // The user may have selected to not be asked again. Ask again...
+      // TODO(b/161428715): Permission denied sends the user to settings.
       await OpenSettingsAlert.showRequestingPermissionsDialog(
           context: context,
           title: strings.calendarPermissionsAlertDialogTitle,

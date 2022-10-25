@@ -12,12 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:automotive_companion/car.dart';
-import 'package:automotive_companion/common_app_bar.dart';
-import 'package:automotive_companion/connection_manager.dart';
-import 'package:automotive_companion/string_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import '../car.dart';
+import '../common_app_bar.dart';
+import '../connection_manager.dart';
+import '../string_localizations.dart';
 
 const _bodyPadding = 16.0;
 const _topPadding = 52.0;
@@ -25,15 +26,13 @@ const _topPadding = 52.0;
 /// Car rename page, user can edit and save the current car name in this page.
 class RenameCarPage extends StatefulWidget {
   final Car car;
-
-  const RenameCarPage({Key? key, required this.car}) : super(key: key);
-
+  RenameCarPage({Key key, @required this.car}) : super(key: key);
   @override
   State<StatefulWidget> createState() => _RenameCarPageState();
 }
 
 class _RenameCarPageState extends State<RenameCarPage> {
-  late ConnectionManager _connectionManager;
+  ConnectionManager _connectionManager;
   final _textFieldController = TextEditingController();
 
   @override
@@ -57,8 +56,10 @@ class _RenameCarPageState extends State<RenameCarPage> {
         context,
         title: strings.renamePageTitle,
         actions: [
-          FlatButton(
-            textColor: Theme.of(context).primaryColor,
+          TextButton(
+            style: TextButton.styleFrom(
+              foregroundColor: Theme.of(context).primaryColor,
+            ),
             onPressed: () async {
               var success = await _connectionManager.renameCar(
                   widget.car.id, _textFieldController.text);
@@ -83,7 +84,7 @@ class _RenameCarPageState extends State<RenameCarPage> {
               filled: true,
               fillColor: Theme.of(context).primaryColorDark,
               suffixIcon: IconButton(
-                onPressed: () => WidgetsBinding.instance!
+                onPressed: () => WidgetsBinding.instance
                     .addPostFrameCallback((_) => _textFieldController.clear()),
                 icon: Icon(Icons.clear),
               ),

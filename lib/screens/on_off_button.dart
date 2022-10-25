@@ -18,18 +18,17 @@ const _bigButtonHorizontalMargin = 40.0;
 const _bigButtonVerticalMargin = 8.0;
 const _bigButtonPadding = 16.0;
 
-/// A [RaisedButton] with a margin that has on and off states.
+/// A [ElevatedButton] with a margin that has on and off states.
 ///
 /// Similar to a [Checkbox] the onChanged callback is passed the value that
 /// should then be passed back to the constructor as [value].  The parent
 /// [StatefulWidget] state should be updated by calling [State.setState].
 class OnOffButton extends StatelessWidget {
   final String text;
-  final ValueChanged<bool>? onChanged;
+  final ValueChanged<bool> onChanged;
   final bool value;
 
-  const OnOffButton(this.text, {Key? key, this.onChanged, required this.value})
-      : super(key: key);
+  OnOffButton(this.text, {this.onChanged, @required this.value});
 
   @override
   Widget build(BuildContext context) {
@@ -37,15 +36,16 @@ class OnOffButton extends StatelessWidget {
       margin: const EdgeInsets.symmetric(
           horizontal: _bigButtonHorizontalMargin,
           vertical: _bigButtonVerticalMargin),
-      child: RaisedButton(
-        padding: EdgeInsets.all(_bigButtonPadding),
-        onPressed: (onChanged == null) ? null : () => onChanged?.call(!value),
-        color: (value || onChanged == null)
-            ? Theme.of(context).colorScheme.surface
-            : Theme.of(context).primaryColor,
-        textColor: (value || onChanged == null)
-            ? Theme.of(context).primaryColor
-            : Theme.of(context).colorScheme.onPrimary,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          foregroundColor: (value || onChanged == null)
+              ? Theme.of(context).primaryColor
+              : Theme.of(context).colorScheme.onPrimary,
+          backgroundColor: (value || onChanged == null)
+              ? Theme.of(context).colorScheme.surface
+              : Theme.of(context).primaryColor, padding: EdgeInsets.all(_bigButtonPadding),
+        ),
+        onPressed: (onChanged == null) ? null : () => onChanged(!value),
         child: Text(text),
       ),
     );

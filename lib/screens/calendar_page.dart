@@ -14,20 +14,18 @@
 
 import 'dart:developer';
 
-import 'package:automotive_companion/calendar_sync_service.dart';
-import 'package:automotive_companion/calendar_view_data.dart';
-import 'package:automotive_companion/car.dart';
-import 'package:automotive_companion/common_app_bar.dart';
-import 'package:automotive_companion/screens/on_off_button.dart';
-import 'package:automotive_companion/screens/open_settings_alert_dialog.dart';
-import 'package:automotive_companion/string_localizations.dart';
-import 'package:automotive_companion/values/dimensions.dart' as dimensions;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-final _calendarColorSize = 12.0;
-final _defaultCalendarColor = Colors.blue[500];
+import '../calendar_sync_service.dart';
+import '../calendar_view_data.dart';
+import '../car.dart';
+import '../common_app_bar.dart';
+import '../string_localizations.dart';
+import '../values/dimensions.dart' as dimensions;
+import 'on_off_button.dart';
+import 'open_settings_alert_dialog.dart';
 
 /// Page for the calendar sync feature.
 ///
@@ -36,18 +34,17 @@ final _defaultCalendarColor = Colors.blue[500];
 class CalendarPage extends StatefulWidget {
   final Car car;
 
-  const CalendarPage({Key? key, required this.car}) : super(key: key);
+  CalendarPage({Key key, @required this.car}) : super(key: key);
 
   @override
   State createState() => _CalendarPageState();
 }
 
 class _CalendarPageState extends State<CalendarPage> {
-  late CalendarSyncService _calendarSyncService;
-
-  Map<String, List<CalendarViewData>> _accountToCalendars = {};
-  List<String> _selectedCalendarIds = [];
-  bool _enabled = false;
+  CalendarSyncService _calendarSyncService;
+  Map<String, List<CalendarViewData>> _accountToCalendars;
+  List<String> _selectedCalendarIds;
+  bool _enabled;
 
   @override
   void initState() {
@@ -168,9 +165,10 @@ class _CalendarPageState extends State<CalendarPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Divider(),
-            _textItem(
-              Text(account, style: Theme.of(context).textTheme.subtitle1),
-            ),
+            _textItem(Text(
+              account ?? _strings.calendarSyncDefaultAccount,
+              style: Theme.of(context).textTheme.subtitle1,
+            )),
             _calendarForAccount(account),
           ],
         );
@@ -182,7 +180,7 @@ class _CalendarPageState extends State<CalendarPage> {
   ///
   /// If no calendars are found on the device we'll let the users know.
   Widget _calendarForAccount(String account) {
-    final calendars = _accountToCalendars[account] ?? [];
+    final calendars = _accountToCalendars[account];
     return Column(children: calendars.map(_calendarItem).toList());
   }
 
@@ -196,7 +194,7 @@ class _CalendarPageState extends State<CalendarPage> {
         overflow: TextOverflow.fade,
         style: Theme.of(context)
             .textTheme
-            .bodyText1!
+            .bodyText1
             .apply(color: Theme.of(context).colorScheme.onBackground),
       ),
       secondary: _calendarColorIndicator(calendar.color),
@@ -215,12 +213,12 @@ class _CalendarPageState extends State<CalendarPage> {
     );
   }
 
-  Widget _calendarColorIndicator(Color? color) {
+  Widget _calendarColorIndicator(Color color) {
     return Container(
-      width: _calendarColorSize,
+      width: 12,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: color ?? _defaultCalendarColor,
+        color: color,
       ),
     );
   }

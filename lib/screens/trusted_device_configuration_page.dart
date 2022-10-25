@@ -12,21 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:automotive_companion/car.dart';
-import 'package:automotive_companion/common_app_bar.dart';
-import 'package:automotive_companion/screens/trust_agent_enrollment_page.dart';
-import 'package:automotive_companion/string_localizations.dart';
-import 'package:automotive_companion/trusted_device_manager.dart';
-import 'package:automotive_companion/values/dimensions.dart' as dimensions;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import '../car.dart';
+import '../common_app_bar.dart';
+import '../string_localizations.dart';
+import '../trusted_device_manager.dart';
+import '../values/dimensions.dart' as dimensions;
+import 'trust_agent_enrollment_page.dart';
 
 /// Page to configure whether the phone should be unlocked first before the
 /// trusted device feature activates.
 class TrustedDeviceConfigurationPage extends StatefulWidget {
   final Car associatedCar;
 
-  const TrustedDeviceConfigurationPage({Key? key, required this.associatedCar})
+  TrustedDeviceConfigurationPage({Key key, this.associatedCar})
       : super(key: key);
 
   @override
@@ -36,7 +37,7 @@ class TrustedDeviceConfigurationPage extends StatefulWidget {
 class _TrustedDeviceConfigurationPageState
     extends State<TrustedDeviceConfigurationPage> {
   var _isDeviceUnlockRequired = true;
-  late TrustedDeviceManager _trustedDeviceManager;
+  TrustedDeviceManager _trustedDeviceManager;
 
   @override
   void initState() {
@@ -103,7 +104,7 @@ class _TrustedDeviceConfigurationPageState
                   children: [
                     ListTile(
                       title: Text(strings.quickUnlockSecureOptionLabel,
-                          style: Theme.of(context).textTheme.bodyText2!.apply(
+                          style: Theme.of(context).textTheme.bodyText2.apply(
                               color:
                                   Theme.of(context).colorScheme.onBackground)),
                       subtitle: Text(strings.quickUnlockSecureOption,
@@ -118,7 +119,7 @@ class _TrustedDeviceConfigurationPageState
                     ),
                     ListTile(
                       title: Text(strings.quickUnlockConvenientOptionLabel,
-                          style: Theme.of(context).textTheme.bodyText2!.apply(
+                          style: Theme.of(context).textTheme.bodyText2.apply(
                               color:
                                   Theme.of(context).colorScheme.onBackground)),
                       subtitle: Text(strings.quickUnlockConvenientOption,
@@ -138,11 +139,13 @@ class _TrustedDeviceConfigurationPageState
               ButtonTheme(
                 height: dimensions.actionButtonHeight,
                 minWidth: dimensions.actionButtonWidth,
-                child: RaisedButton(
-                  textColor: Theme.of(context).colorScheme.background,
-                  shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(dimensions.actionButtonRadius)),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Theme.of(context).colorScheme.background,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                            dimensions.actionButtonRadius)),
+                  ),
                   onPressed: () {
                     _trustedDeviceManager.setDeviceUnlockRequired(
                         widget.associatedCar, _isDeviceUnlockRequired);

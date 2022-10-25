@@ -12,21 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:automotive_companion/car.dart';
-import 'package:automotive_companion/connection_manager.dart';
-import 'package:automotive_companion/screens/looking_for_car_page.dart';
-import 'package:automotive_companion/screens/rename_car_page.dart';
-import 'package:automotive_companion/screens/welcome_page.dart';
-import 'package:automotive_companion/string_localizations.dart';
-import 'package:automotive_companion/values/bluetooth_state.dart';
-import 'package:automotive_companion/values/dimensions.dart' as dimensions;
 import 'package:automotive_companion/widgets/calendar_sync_feature_item.dart';
 import 'package:automotive_companion/widgets/messaging_sync_feature_item.dart';
 import 'package:automotive_companion/widgets/trusted_device_feature_item.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
+
+import '../car.dart';
+import '../connection_manager.dart';
+import '../string_localizations.dart';
+import '../values/bluetooth_state.dart';
+import '../values/dimensions.dart' as dimensions;
+import 'looking_for_car_page.dart';
+import 'rename_car_page.dart';
+import 'welcome_page.dart';
 
 const _statusIconSize = 10.0;
 const _statusIconPadding = 7.0;
@@ -48,7 +49,7 @@ const _connectionIndicatorPadding = 10.0;
 class CarDetailsPage extends StatefulWidget {
   final Car currentCar;
 
-  const CarDetailsPage({Key? key, required this.currentCar}) : super(key: key);
+  CarDetailsPage({Key key, @required this.currentCar}) : super(key: key);
 
   @override
   State createState() => CarDetailsPageState();
@@ -57,7 +58,7 @@ class CarDetailsPage extends StatefulWidget {
 @visibleForTesting
 class CarDetailsPageState extends State<CarDetailsPage>
     implements ConnectionCallback {
-  late ConnectionManager _connectionManager;
+  ConnectionManager _connectionManager;
 
   var _isBluetoothEnabled = false;
 
@@ -65,8 +66,8 @@ class CarDetailsPageState extends State<CarDetailsPage>
   final _connectedCarsIds = <String>{};
 
   final _associatedCars = <Car>{};
-  late Car _currentCar;
-  String? _versionNumber;
+  Car _currentCar;
+  String _versionNumber;
 
   @override
   void initState() {
@@ -206,8 +207,15 @@ class CarDetailsPageState extends State<CarDetailsPage>
                     _subGroupTitle(strings.securityTitle),
                     TrustedDeviceFeatureItem(currentCar: _currentCar),
 
+                    Divider(color: Theme.of(context).dividerColor),
+
+                    // Data sync sub feature group.
+                    _subGroupTitle(strings.dataSyncTitle),
+                    CalendarSyncFeatureItem(currentCar: _currentCar),
+
+                    // Message sync feature entry, only for Android.
                     if (Theme.of(context).platform == TargetPlatform.android)
-                      ..._androidOnlyFeatures,
+                      MessagingSyncFeatureItem(currentCar: _currentCar),
                   ],
                 ),
               ),
@@ -216,17 +224,6 @@ class CarDetailsPageState extends State<CarDetailsPage>
         ),
       ),
     );
-  }
-
-  List<Widget> get _androidOnlyFeatures {
-    return [
-      Divider(color: Theme.of(context).dividerColor),
-
-      // Data sync sub feature group.
-      _subGroupTitle(StringLocalizations.of(context).dataSyncTitle),
-      CalendarSyncFeatureItem(currentCar: _currentCar),
-      MessagingSyncFeatureItem(currentCar: _currentCar),
-    ];
   }
 
   Widget get _drawerContents {
@@ -263,13 +260,13 @@ class CarDetailsPageState extends State<CarDetailsPage>
             ),
           ),
         ),
-        if (_versionNumber != null) _versionNumberText(_versionNumber!),
+        if (_versionNumber != null) _versionNumberText,
       ],
     );
   }
 
   /// A widget that displays the current version of the application.
-  Widget _versionNumberText(String versionNumber) {
+  Widget get _versionNumberText {
     final strings = StringLocalizations.of(context);
 
     return Padding(
@@ -279,10 +276,10 @@ class CarDetailsPageState extends State<CarDetailsPage>
         right: _drawerHorizontalPadding,
       ),
       child: Text(
-        strings.versionNumberLabel(versionNumber),
+        strings.versionNumberLabel(_versionNumber),
         style: Theme.of(context)
             .textTheme
-            .caption!
+            .caption
             .apply(color: Theme.of(context).colorScheme.onSecondary),
       ),
     );
@@ -324,11 +321,11 @@ class CarDetailsPageState extends State<CarDetailsPage>
 
   Widget get _connectionStatusIndicator {
     if (_connectedCarsIds.contains(_currentCar.id)) {
-      return _circleIndicator(color: Colors.green[300]!);
+      return _circleIndicator(color: Colors.green[300]);
     }
 
     if (_detectedCarIds.contains(_currentCar.id)) {
-      return _circleIndicator(color: Colors.yellow[700]!);
+      return _circleIndicator(color: Colors.yellow[700]);
     }
 
     return _isBluetoothEnabled
@@ -343,7 +340,9 @@ class CarDetailsPageState extends State<CarDetailsPage>
   /// A circular widget that can be used to represent connection status.
   ///
   /// The indicator will be of the given [color].
-  Widget _circleIndicator({required Color color}) {
+  Widget _circleIndicator({@required Color color}) {
+    assert(color != null);
+
     return Container(
       width: _connectionStatusIndicatorSize,
       height: _connectionStatusIndicatorSize,
@@ -371,7 +370,7 @@ class CarDetailsPageState extends State<CarDetailsPage>
   }
 
   void _updateBluetoothState() async {
-    final isBluetoothEnabled = await _connectionManager.isBluetoothEnabled();
+    final isBluetoothEnabled = await _connectionManager.isBluetoothEnabled;
     setState(() {
       _isBluetoothEnabled = isBluetoothEnabled;
     });
@@ -392,10 +391,10 @@ class CarDetailsPageState extends State<CarDetailsPage>
   Widget _createCarListItem(Car car) {
     final baseStyle = Theme.of(context).textTheme.subtitle1;
     final carNameStyle = car.id == _currentCar.id
-        ? baseStyle?.apply(color: Theme.of(context).colorScheme.onBackground)
+        ? baseStyle.apply(color: Theme.of(context).colorScheme.onBackground)
         : baseStyle;
 
-    return FlatButton(
+    return TextButton(
       onPressed: () {
         // Just close the drawer if user selects the current car.
         car.id == widget.currentCar.id
@@ -432,7 +431,7 @@ class CarDetailsPageState extends State<CarDetailsPage>
 
   Widget get _createConnectCarButton {
     final strings = StringLocalizations.of(context);
-    return FlatButton(
+    return TextButton(
       onPressed: () => Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => LookingForCarPage()),
@@ -441,7 +440,7 @@ class CarDetailsPageState extends State<CarDetailsPage>
         children: [
           Icon(Icons.add, color: Theme.of(context).primaryColor),
           Padding(
-            padding: EdgeInsets.only(left: dimensions.smallIconPadding),
+            padding: const EdgeInsets.only(left: dimensions.smallIconPadding),
             child: Text(
               strings.addCarButtonLabel,
               style: Theme.of(context).textTheme.button,
@@ -487,7 +486,7 @@ class CarDetailsPageState extends State<CarDetailsPage>
       text,
       style: Theme.of(context)
           .textTheme
-          .subtitle1!
+          .subtitle1
           .apply(color: Theme.of(context).colorScheme.onBackground),
     );
   }
@@ -518,20 +517,20 @@ class CarDetailsPageState extends State<CarDetailsPage>
           title: Text(strings.removeCarDialogTitle),
           content: Text(strings.removeCarDialogContent),
           actions: [
-            FlatButton(
+            TextButton(
               onPressed: Navigator.of(context).pop,
               child: Text(strings.cancelButtonLabel,
                   style: Theme.of(context)
                       .textTheme
-                      .button!
+                      .button
                       .copyWith(color: Theme.of(context).primaryColor)),
             ),
-            FlatButton(
+            TextButton(
               onPressed: _removeCurrentCar,
               child: Text(strings.removeButtonLabel,
                   style: Theme.of(context)
                       .textTheme
-                      .button!
+                      .button
                       .apply(color: Colors.red[300])),
             ),
           ],

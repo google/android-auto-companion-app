@@ -14,20 +14,21 @@
 
 import 'dart:async';
 
-import 'package:automotive_companion/car.dart';
-import 'package:automotive_companion/common_app_bar.dart';
-import 'package:automotive_companion/connection_manager.dart';
-import 'package:automotive_companion/screens/bluetooth_warning_page.dart';
-import 'package:automotive_companion/screens/connecting_to_car_page.dart';
-import 'package:automotive_companion/screens/one_car_found_page.dart';
-import 'package:automotive_companion/screens/select_car_page.dart';
-import 'package:automotive_companion/string_localizations.dart';
-import 'package:automotive_companion/values/bluetooth_state.dart';
-import 'package:automotive_companion/values/dimensions.dart' as dimensions;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+
+import '../car.dart';
+import '../common_app_bar.dart';
+import '../connection_manager.dart';
+import '../string_localizations.dart';
+import '../values/bluetooth_state.dart';
+import '../values/dimensions.dart' as dimensions;
+import 'bluetooth_warning_page.dart';
+import 'connecting_to_car_page.dart';
+import 'one_car_found_page.dart';
+import 'select_car_page.dart';
 
 /// How long to scan for cars after one car has been found.
 const _waitingForOtherCarsTimeout = Duration(seconds: 2);
@@ -35,22 +36,20 @@ const _waitingForOtherCarsTimeout = Duration(seconds: 2);
 /// Displays to the user that a scan for cars that can be associated is in
 /// progress.
 class LookingForCarPage extends StatefulWidget {
-  const LookingForCarPage({Key? key}) : super(key: key);
-
   @override
   State createState() => LookingForCarPageState();
 }
 
 class LookingForCarPageState extends State<LookingForCarPage>
     implements ConnectionCallback, DiscoveryCallback {
-  late ConnectionManager _connectionManager;
+  ConnectionManager _connectionManager;
 
   /// A list of names for cars that can be associated with.
   final _discoveredCars = <Car>{};
 
   /// A timer that starts after a car is discovered and determines when a
   /// navigation to the next page should occur.
-  Timer? _nextPageNavigationTimer;
+  Timer nextPageNavigationTimer;
 
   @override
   void initState() {
@@ -63,7 +62,7 @@ class LookingForCarPageState extends State<LookingForCarPage>
   @override
   void dispose() {
     super.dispose();
-    _nextPageNavigationTimer?.cancel();
+    nextPageNavigationTimer?.cancel();
     _connectionManager.unregisterConnectionCallback(this);
     _connectionManager.unregisterDiscoveryCallback(this);
   }
@@ -146,13 +145,13 @@ class LookingForCarPageState extends State<LookingForCarPage>
 
     // Ensure the next page navigation timer is only initialized once -- when
     // the first car is discovered.
-    if (_nextPageNavigationTimer != null) {
+    if (nextPageNavigationTimer != null) {
       return;
     }
 
     // Schedule a timer so that a scan will continue to run. At the end of the
     // timer, navigate based on how many total cars were discovered.
-    _nextPageNavigationTimer = Timer(_waitingForOtherCarsTimeout, () {
+    nextPageNavigationTimer = Timer(_waitingForOtherCarsTimeout, () {
       final nextPage = _discoveredCars.length == 1
           ? OneCarFoundPage(carToConnect: _discoveredCars.first)
           : SelectCarPage(discoveredCars: _discoveredCars);
@@ -164,7 +163,7 @@ class LookingForCarPageState extends State<LookingForCarPage>
 
   @override
   void onAssociationStarted() {
-    _nextPageNavigationTimer?.cancel();
+    nextPageNavigationTimer?.cancel();
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (_) => ConnectingPage()));
   }
@@ -198,14 +197,14 @@ class LookingForCarPageState extends State<LookingForCarPage>
   void _navigateToBluetoothWarningPage() {
     // Prevent a navigation to another page when navigating to the Bluetooth
     // warning page.
-    _nextPageNavigationTimer?.cancel();
+    nextPageNavigationTimer?.cancel();
 
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (_) => BluetoothWarningPage()));
   }
 
   void _scanForCarsToAssociate(String namePrefix) async {
-    if (await _connectionManager.isBluetoothEnabled()) {
+    if (await _connectionManager.isBluetoothEnabled) {
       _connectionManager.scanForCarsToAssociate(namePrefix);
     } else {
       _navigateToBluetoothWarningPage();
@@ -226,7 +225,7 @@ class LookingForCarPageState extends State<LookingForCarPage>
           ),
           content: Text(strings.restartBluetoothDialogContent),
           actions: [
-            FlatButton(
+            TextButton(
               onPressed: () => Navigator.popUntil(
                 context,
                 ModalRoute.withName('/'),
@@ -234,7 +233,7 @@ class LookingForCarPageState extends State<LookingForCarPage>
               child: Text(strings.alertDialogOkButton,
                   style: Theme.of(context)
                       .textTheme
-                      .button!
+                      .button
                       .copyWith(color: Theme.of(context).primaryColor)),
             ),
           ],

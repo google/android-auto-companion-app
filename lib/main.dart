@@ -12,16 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:automotive_companion/calendar_sync_service.dart';
-import 'package:automotive_companion/connection_manager.dart';
-import 'package:automotive_companion/messaging_channel_handler.dart';
-import 'package:automotive_companion/screens/car_details_page.dart';
-import 'package:automotive_companion/screens/welcome_page.dart';
-import 'package:automotive_companion/string_localizations.dart';
-import 'package:automotive_companion/trusted_device_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
+
+import 'calendar_sync_service.dart';
+import 'connection_manager.dart';
+import 'messaging_channel_handler.dart';
+import 'trusted_device_manager.dart';
+import 'screens/car_details_page.dart';
+import 'screens/welcome_page.dart';
+import 'string_localizations.dart';
 
 const _primaryColor = Color(0xFF8AB4F8);
 

@@ -12,15 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:automotive_companion/car.dart';
-import 'package:automotive_companion/common_app_bar.dart';
-import 'package:automotive_companion/screens/trusted_device_intro_page.dart';
-import 'package:automotive_companion/screens/unlock_history_page.dart';
-import 'package:automotive_companion/string_localizations.dart';
-import 'package:automotive_companion/trusted_device_manager.dart';
-import 'package:automotive_companion/values/dimensions.dart' as dimensions;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import '../car.dart';
+import '../common_app_bar.dart';
+import '../string_localizations.dart';
+import '../trusted_device_manager.dart';
+import '../values/dimensions.dart' as dimensions;
+import 'trusted_device_intro_page.dart';
+import 'unlock_history_page.dart';
 
 const _bodyPadding = 16.0;
 const _buttonHeight = 36.0;
@@ -30,8 +31,7 @@ const _buttonWidth = 271.0;
 /// allows user to turn on/off the feature.
 class TrustedDeviceSettingsPage extends StatefulWidget {
   final Car car;
-  const TrustedDeviceSettingsPage({Key? key, required this.car})
-      : super(key: key);
+  TrustedDeviceSettingsPage({Key key, @required this.car}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => TrustedDeviceSettingsState();
@@ -40,7 +40,7 @@ class TrustedDeviceSettingsPage extends StatefulWidget {
 @visibleForTesting
 class TrustedDeviceSettingsState extends State<TrustedDeviceSettingsPage>
     implements TrustAgentCallback {
-  late TrustedDeviceManager _trustedDeviceManager;
+  TrustedDeviceManager _trustedDeviceManager;
   var _isTrustedDeviceEnabled = false;
   var _isDeviceUnlockRequired = true;
   var _shouldShowUnlockNotification = true;
@@ -131,13 +131,15 @@ class TrustedDeviceSettingsState extends State<TrustedDeviceSettingsPage>
       child: ButtonTheme(
         height: _buttonHeight,
         minWidth: _buttonWidth,
-        child: RaisedButton(
-          color: _isTrustedDeviceEnabled
-              ? Theme.of(context).colorScheme.surface
-              : Theme.of(context).primaryColor,
-          textColor: _isTrustedDeviceEnabled
-              ? Theme.of(context).primaryColor
-              : Theme.of(context).colorScheme.onPrimary,
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            foregroundColor: _isTrustedDeviceEnabled
+                ? Theme.of(context).primaryColor
+                : Theme.of(context).colorScheme.onPrimary,
+            backgroundColor: _isTrustedDeviceEnabled
+                ? Theme.of(context).colorScheme.surface
+                : Theme.of(context).primaryColor,
+          ),
           onPressed: () async {
             if (_isTrustedDeviceEnabled) {
               _trustedDeviceManager.stopTrustAgentEnrollment(widget.car);
@@ -182,7 +184,7 @@ class TrustedDeviceSettingsState extends State<TrustedDeviceSettingsPage>
               strings.quickUnlockConfigurationLabel,
               style: Theme.of(context)
                   .textTheme
-                  .subtitle1!
+                  .subtitle1
                   .apply(color: Theme.of(context).colorScheme.onBackground),
             ),
           ),
@@ -251,7 +253,7 @@ class TrustedDeviceSettingsState extends State<TrustedDeviceSettingsPage>
               strings.recentUnlockActivityTitle,
               style: Theme.of(context)
                   .textTheme
-                  .subtitle1!
+                  .subtitle1
                   .apply(color: Theme.of(context).colorScheme.onBackground),
             ),
           ],
@@ -283,7 +285,7 @@ class TrustedDeviceSettingsState extends State<TrustedDeviceSettingsPage>
             strings.unlockNotificationTitle,
             style: Theme.of(context)
                 .textTheme
-                .subtitle1!
+                .subtitle1
                 .apply(color: Theme.of(context).colorScheme.onBackground),
           ),
           Spacer(),

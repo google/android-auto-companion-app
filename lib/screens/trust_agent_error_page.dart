@@ -12,10 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:automotive_companion/common_app_bar.dart';
-import 'package:automotive_companion/string_localizations.dart';
-import 'package:automotive_companion/values/dimensions.dart' as dimensions;
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import '../common_app_bar.dart';
+import '../string_localizations.dart';
+import '../values/dimensions.dart' as dimensions;
 
 /// A generic landing page for any errors that occur during trust agent
 /// enrollment.
