@@ -47,5 +47,7 @@
 	<array>
 		<string>bluetooth-central</string>
 	</array>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
 </dict>
 </plist>
