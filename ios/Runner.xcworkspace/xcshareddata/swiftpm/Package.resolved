@@ -12,10 +12,10 @@
     {
       "identity" : "android-auto-companion-ios",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/google/android-auto-companion-ios.git",
+      "location" : "https://github.com/google/android-auto-companion-ios",
       "state" : {
-        "revision" : "fc37082df8b38fcf37d75783cd2bdb4a55c15f7e",
-        "version" : "2.0.3"
+        "revision" : "f94ae61c8ffb13bcd589968209f1b3e74cb53bfd",
+        "version" : "2.0.5"
       }
     },
     {
@@ -23,8 +23,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-protobuf.git",
       "state" : {
-        "revision" : "7e2c5f3cbbeea68e004915e3a8961e20bd11d824",
-        "version" : "1.18.0"
+        "revision" : "ab3a58b7209a17d781c0d1dbb3e1ff3da306bae8",
+        "version" : "1.20.3"
       }
     }
   ],
