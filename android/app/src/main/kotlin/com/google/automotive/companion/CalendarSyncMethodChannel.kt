@@ -140,8 +140,9 @@ class CalendarSyncMethodChannel(private val registrar: Registrar) : MethodCallHa
    * Defaulting permission code used to 0 assuming no other permissions are requested at this
    * instant.
    */
-  private fun  requestCalendarPermissions() {
-    requestPermissions(registrar.activity(), arrayOf(permission.READ_CALENDAR), 0)
+  private fun requestCalendarPermissions() {
+    val activity = registrar.activity() ?: return
+    requestPermissions(activity, arrayOf(permission.READ_CALENDAR), 0)
   }
 
   private fun hasPermissions(): Boolean {
