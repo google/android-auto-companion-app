@@ -19,6 +19,7 @@ import os.log
 
 /// Common model for the trusted device state. Subclass this for each platform.
 @available(iOS 10.0, watchOS 6.0, *)
+@MainActor
 open class TrustedDeviceModel:
   NSObject,
   ConnectionManagerAssociationDelegate,

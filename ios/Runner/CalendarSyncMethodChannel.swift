@@ -8,6 +8,7 @@ import os.log
 
 /// Platform implementation of the Calendar Sync companion feature to be used in Flutter app.
 @available(iOS 10.0, *)
+@MainActor
 public class CalendarSyncMethodChannel {
   private static let log = OSLog(
     subsystem: "com.google.ios.aae.calendarsync.flutter",
@@ -72,26 +73,28 @@ public class CalendarSyncMethodChannel {
     }
   }
 
-  public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    switch call.method {
-    case CalendarSyncConstants.hasPermissions:
-      result(eventStore.hasPermissions)
-    case CalendarSyncConstants.requestPermissions:
-      requestPermissions(result: result)
-    case CalendarSyncConstants.retrieveCalendars:
-      retrieveCalendars(result: result)
-    case CalendarSyncConstants.disableCar:
-      disableCar(call: call, result: result)
-    case CalendarSyncConstants.enableCar:
-      enableCar(call: call, result: result)
-    case CalendarSyncConstants.isCarEnabled:
-      isCarEnabled(call: call, result: result)
-    case CalendarSyncConstants.fetchCalendarIdsToSync:
-      fetchCalendarIdsToSync(call: call, result: result)
-    case CalendarSyncConstants.storeCalendarIdsToSync:
-      storeCalendarIdsToSync(call: call, result: result)
-    default:
-      result(FlutterMethodNotImplemented)
+  nonisolated public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+    Task {
+      switch call.method {
+      case CalendarSyncConstants.hasPermissions:
+        result(eventStore.hasPermissions)
+      case CalendarSyncConstants.requestPermissions:
+        await requestPermissions(result: result)
+      case CalendarSyncConstants.retrieveCalendars:
+        await retrieveCalendars(result: result)
+      case CalendarSyncConstants.disableCar:
+        await disableCar(call: call, result: result)
+      case CalendarSyncConstants.enableCar:
+        await enableCar(call: call, result: result)
+      case CalendarSyncConstants.isCarEnabled:
+        await isCarEnabled(call: call, result: result)
+      case CalendarSyncConstants.fetchCalendarIdsToSync:
+        await fetchCalendarIdsToSync(call: call, result: result)
+      case CalendarSyncConstants.storeCalendarIdsToSync:
+        await storeCalendarIdsToSync(call: call, result: result)
+      default:
+        result(FlutterMethodNotImplemented)
+      }
     }
   }
 

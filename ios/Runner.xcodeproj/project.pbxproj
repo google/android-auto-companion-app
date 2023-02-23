@@ -622,16 +622,16 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/google/android-auto-companion-calendarsync-ios";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
+				branch = preview;
+				kind = branch;
 			};
 		};
 		F053621027A86C4000EAD818 /* XCRemoteSwiftPackageReference "android-auto-companion-ios" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/google/android-auto-companion-ios.git";
 			requirement = {
-				kind = upToNextMinorVersion;
-				minimumVersion = 2.0.0;
+				branch = preview;
+				kind = branch;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
