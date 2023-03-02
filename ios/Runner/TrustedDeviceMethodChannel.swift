@@ -99,34 +99,38 @@ public class TrustedDeviceMethodChannel: TrustedDeviceModel {
   }
 
   private func setUpTrustedDeviceCallHandler() {
-    trustedDeviceMethodChannel.setMethodCallHandler { [weak self] (call, result) in
+    trustedDeviceMethodChannel.setMethodCallHandler(handle)
+  }
+
+  nonisolated private func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+    Task { [weak self] in
       switch call.method {
       case TrustedDeviceConstants.openSecuritySettings:
-        self?.openSettings()
+        await self?.openSettings()
 
       case TrustedDeviceConstants.enrollTrustAgent:
-        self?.invokeEnrollForTrustAgent(methodCall: call)
+        await self?.invokeEnrollForTrustAgent(methodCall: call)
 
       case TrustedDeviceConstants.stopTrustAgentEnrollment:
-        self?.invokeStopEnrollment(methodCall: call)
+        await self?.invokeStopEnrollment(methodCall: call)
 
       case TrustedDeviceConstants.getUnlockHistory:
-        self?.invokeRetrieveUnlockHistory(methodCall: call, result: result)
+        await self?.invokeRetrieveUnlockHistory(methodCall: call, result: result)
 
       case TrustedDeviceConstants.isTrustedDeviceEnrolled:
-        self?.invokeIsTrustedDeviceEnrolled(methodCall: call, result: result)
+        await self?.invokeIsTrustedDeviceEnrolled(methodCall: call, result: result)
 
       case TrustedDeviceConstants.isDeviceUnlockRequired:
-        self?.invokeIsDeviceUnlockRequired(methodCall: call, result: result)
+        await self?.invokeIsDeviceUnlockRequired(methodCall: call, result: result)
 
       case TrustedDeviceConstants.setDeviceUnlockRequired:
-        self?.invokeSetDeviceUnlockRequired(methodCall: call)
+        await self?.invokeSetDeviceUnlockRequired(methodCall: call)
 
       case TrustedDeviceConstants.shouldShowUnlockNotification:
-        self?.invokeShouldShowUnlockNotification(methodCall: call, result: result)
+        await self?.invokeShouldShowUnlockNotification(methodCall: call, result: result)
 
       case TrustedDeviceConstants.setShowUnlockNotification:
-        self?.invokeSetShowUnlockNotification(methodCall: call)
+        await self?.invokeSetShowUnlockNotification(methodCall: call)
 
       default:
         result(FlutterMethodNotImplemented)
