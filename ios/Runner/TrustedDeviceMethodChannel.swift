@@ -28,7 +28,6 @@ private enum TrustedDeviceEnrollmentError: Int {
 
 /// This is the class used to setup Flutter method channel, handle and invoke any methods from and
 /// to Flutter app.
-@available(iOS 10.0, *)
 public class TrustedDeviceMethodChannel: TrustedDeviceModel {
 
   private static let unlockNotificationIdentifier = "trusted-device-unlock-succeed"

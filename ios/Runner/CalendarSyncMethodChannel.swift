@@ -7,7 +7,6 @@ import UIKit
 import os.log
 
 /// Platform implementation of the Calendar Sync companion feature to be used in Flutter app.
-@available(iOS 10.0, *)
 @MainActor
 public class CalendarSyncMethodChannel {
   private static let log = OSLog(

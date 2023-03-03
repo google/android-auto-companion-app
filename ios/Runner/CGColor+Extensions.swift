@@ -15,7 +15,6 @@
 import Foundation
 import UIKit
 
-@available(iOS 10.0, *)
 extension CGColor {
   /// Returns the color as ARGB value.
   public func argb() -> UInt32 {
