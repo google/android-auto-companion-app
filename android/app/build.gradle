@@ -81,5 +81,5 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     // The ConnectedDeviceManager itself.
-    implementation 'com.google.android.car.connectionservice:connectionservice:1.2.1'
+    implementation 'com.google.android.car.connectionservice:connectionservice:2.0.8'
 }
