@@ -1,3 +1,5 @@
+apply plugin: 'kotlin-kapt'
+
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file('local.properties')
 if (localPropertiesFile.exists()) {
@@ -66,6 +68,8 @@ flutter {
 
 
 dependencies {
+    def room_version = "2.4.3"
+
     implementation 'com.google.android.material:material:1.5.0'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.0'
 
@@ -79,6 +83,12 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-guava:1.6.0"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "androidx.room:room-runtime:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"
+
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+
+    kapt "androidx.room:room-compiler:$room_version"
 
     // The ConnectedDeviceManager itself.
     implementation 'com.google.android.car.connectionservice:connectionservice:2.0.8'
