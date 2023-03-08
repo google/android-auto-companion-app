@@ -18,7 +18,7 @@ import CoreBluetooth
 import os.log
 
 /// Common model for the trusted device state. Subclass this for each platform.
-@available(iOS 10.0, watchOS 6.0, *)
+@MainActor
 open class TrustedDeviceModel:
   NSObject,
   ConnectionManagerAssociationDelegate,
@@ -222,7 +222,6 @@ private enum BluetoothState: String {
   case off = "2"
 }
 
-@available(iOS 10.0, watchOS 6.0, *)
 extension RadioState {
   /// Converts this `CBManagerState` to a bluetooth state that the flutter app understands.
   public func toBluetoothState() -> String {

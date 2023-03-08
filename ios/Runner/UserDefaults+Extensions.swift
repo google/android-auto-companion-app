@@ -14,7 +14,6 @@
 
 import Foundation
 
-@available(iOS 10.0, *)
 extension UserDefaults {
   enum UserDefaultsError: Error {
     /// Stored user settings couldn't be decoded into `CalendarConfig`.

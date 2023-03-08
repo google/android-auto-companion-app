@@ -1,7 +1,6 @@
 import EventKit
 import Foundation
 
-@available(iOS 10.0, *)
 extension EKEventStore {
   enum EKEventStoreError: Error {
     /// User did not grant permission to use calendar.
