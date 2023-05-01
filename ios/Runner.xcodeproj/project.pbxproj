@@ -630,7 +630,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/google/android-auto-companion-ios.git";
 			requirement = {
-				kind = upToNextMinorVersion;
+				kind = upToNextMajorVersion;
 				minimumVersion = 3.0.0;
 			};
 		};
