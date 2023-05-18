@@ -91,5 +91,5 @@ dependencies {
     kapt "androidx.room:room-compiler:$room_version"
 
     // The ConnectedDeviceManager itself.
-    implementation 'com.google.android.car.connectionservice:connectionservice:2.0.8'
+    implementation 'com.google.android.car.connectionservice:connectionservice:2.1.2'
 }
