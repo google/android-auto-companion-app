@@ -55,6 +55,8 @@ android {
 
     buildTypes {
         release {
+            shrinkResources false
+            minifyEnabled false
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig signingConfigs.debug
@@ -71,6 +73,7 @@ dependencies {
     def room_version = "2.4.3"
 
     implementation 'com.google.android.material:material:1.5.0'
+    implementation "com.google.protobuf:protobuf-java:3.21.12"
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.0'
 
     // Dependencies required for the ConnectedDeviceManager.
@@ -92,4 +95,8 @@ dependencies {
 
     // The ConnectedDeviceManager itself.
     implementation 'com.google.android.car.connectionservice:connectionservice:2.1.2'
+    // If Companion Android SDK is built locally, it should be placed under
+    // app/src/main/libs/, and pulled in with the import below.
+    //implementation(name:"companion-release", ext:"aar")
+
 }
