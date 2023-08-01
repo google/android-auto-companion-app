@@ -1,18 +1,30 @@
+// Copyright 2023 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 import AndroidAutoCalendarSync
 import AndroidAutoConnectedDeviceManager
+import AndroidAutoLogger
 import EventKit
 import Flutter
 import Foundation
 import UIKit
-import os.log
 
 /// Platform implementation of the Calendar Sync companion feature to be used in Flutter app.
-@MainActor
-public class CalendarSyncMethodChannel {
-  private static let log = OSLog(
-    subsystem: "com.google.ios.aae.calendarsync.flutter",
-    category: "CalendarSyncPlugin"
-  )
+@MainActor public class CalendarSyncMethodChannel {
+  private static let log = Logger(for: CalendarSyncMethodChannel.self)
+
+  var settings = CarCalendarSettings(UserDefaults.standard)
 
   /// `FlutterError` error code kinds. Communicated back to the Flutter app.
   enum FlutterErrorCode: String {
@@ -30,14 +42,13 @@ public class CalendarSyncMethodChannel {
     let account: String
   }
 
-  // For now, we'll sync events within three days from now.
+  /// For now, we'll sync events within three days from now.
   private let daysToSync = 3
 
   private let methodChannel: FlutterMethodChannel
 
-  let calendarSyncClient: CalendarSyncClientProtocol
+  let calendarSyncClient: any CalendarSyncClient
   let eventStore: EKEventStore
-  let userDefaults: UserDefaults
 
   public init<T: SomeCentralManager>(
     _ controller: FlutterViewController,
@@ -49,48 +60,47 @@ public class CalendarSyncMethodChannel {
 
     self.eventStore = EKEventStore()
 
-    self.calendarSyncClient = CalendarSyncClient(
+    self.calendarSyncClient = CalendarSyncClientFactory.v2.makeClient(
+      settings: settings,
       eventStore: eventStore,
-      connectedCarManager: connectionManager
+      connectedCarManager: connectionManager,
+      syncDuration: .days(daysToSync)
     )
-    self.userDefaults = .standard
 
     methodChannel.setMethodCallHandler(handle)
 
     do {
       for channel in connectionManager.securedChannels {
-        if try userDefaults.isCalendarSyncEnabled(forCarId: channel.car.id) {
-          try synchronize(forCarId: channel.car.id)
+        if settings[channel.car].isEnabled {
+          try synchronize(withCar: channel.car.id)
         }
       }
     } catch {
-      os_log(
-        "Failed to synchronize connected cars (%@)",
-        log: Self.log,
-        type: .error,
-        error.localizedDescription)
+      Self.log.error("Failed to synchronize connected cars (\(error.localizedDescription))")
     }
   }
 
-  nonisolated public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    Task {
+  nonisolated private func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+    Task { @MainActor [weak self] in
+      guard let self else { return }
+
       switch call.method {
       case CalendarSyncConstants.hasPermissions:
-        result(eventStore.hasPermissions)
+        result(self.eventStore.hasPermissions)
       case CalendarSyncConstants.requestPermissions:
-        await requestPermissions(result: result)
+        self.requestPermissions(result: result)
       case CalendarSyncConstants.retrieveCalendars:
-        await retrieveCalendars(result: result)
+        self.retrieveCalendars(result: result)
       case CalendarSyncConstants.disableCar:
-        await disableCar(call: call, result: result)
+        self.disableCar(call: call, result: result)
       case CalendarSyncConstants.enableCar:
-        await enableCar(call: call, result: result)
+        self.enableCar(call: call, result: result)
       case CalendarSyncConstants.isCarEnabled:
-        await isCarEnabled(call: call, result: result)
+        self.isCarEnabled(call: call, result: result)
       case CalendarSyncConstants.fetchCalendarIdsToSync:
-        await fetchCalendarIdsToSync(call: call, result: result)
+        self.fetchCalendarIdsToSync(call: call, result: result)
       case CalendarSyncConstants.storeCalendarIdsToSync:
-        await storeCalendarIdsToSync(call: call, result: result)
+        self.storeCalendarIdsToSync(call: call, result: result)
       default:
         result(FlutterMethodNotImplemented)
       }
@@ -122,15 +132,14 @@ public class CalendarSyncMethodChannel {
   }
 
   // MARK: - Car-specific methods
-
   private func disableCar(call: FlutterMethodCall, result: @escaping FlutterResult) {
-    guard let carId = call.arguments as? String else {
+    guard let carID = call.arguments as? String else {
       result(flutterError(code: .missingArguments, message: "Missing car identifier argument"))
       return
     }
     do {
-      try userDefaults.disableCalendarSync(forCarId: carId)
-      try unsynchronize(forCarId: carId)
+      settings[carID].isEnabled = false
+      try unsynchronize(withCar: carID)
       result(nil)
     } catch {
       result(flutterError(code: .error, message: error.localizedDescription))
@@ -138,13 +147,13 @@ public class CalendarSyncMethodChannel {
   }
 
   private func enableCar(call: FlutterMethodCall, result: @escaping FlutterResult) {
-    guard let carId = call.arguments as? String else {
+    guard let carID = call.arguments as? String else {
       result(flutterError(code: .missingArguments, message: "Missing car identifier argument"))
       return
     }
     do {
-      try userDefaults.enableCalendarSync(forCarId: carId)
-      try synchronize(forCarId: carId)
+      settings[carID].isEnabled = true
+      try synchronize(withCar: carID)
       result(nil)
     } catch {
       result(flutterError(code: .error, message: error.localizedDescription))
@@ -152,27 +161,19 @@ public class CalendarSyncMethodChannel {
   }
 
   private func isCarEnabled(call: FlutterMethodCall, result: @escaping FlutterResult) {
-    guard let carId = call.arguments as? String else {
+    guard let carID = call.arguments as? String else {
       result(flutterError(code: .missingArguments, message: "Missing car identifier argument"))
       return
     }
-    do {
-      result(try userDefaults.isCalendarSyncEnabled(forCarId: carId))
-    } catch {
-      result(flutterError(code: .error, message: error.localizedDescription))
-    }
+    result(settings[carID].isEnabled)
   }
 
   private func fetchCalendarIdsToSync(call: FlutterMethodCall, result: @escaping FlutterResult) {
-    guard let carId = call.arguments as? String else {
+    guard let carID = call.arguments as? String else {
       result(flutterError(code: .missingArguments, message: "Missing car identifier argument"))
       return
     }
-    do {
-      result(try userDefaults.calendarIdentifiersToSync(forCarId: carId))
-    } catch {
-      result(flutterError(code: .error, message: error.localizedDescription))
-    }
+    result(Array(settings[carID].calendarIDs))
   }
 
   private func storeCalendarIdsToSync(call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -180,7 +181,7 @@ public class CalendarSyncMethodChannel {
       result(flutterError(code: .missingArguments, message: "Missing arguments"))
       return
     }
-    guard let carId = arguments[CalendarSyncConstants.carId] as? String else {
+    guard let carID = arguments[CalendarSyncConstants.carId] as? String else {
       result(flutterError(code: .missingArguments, message: "Missing car identifier argument"))
       return
     }
@@ -193,7 +194,7 @@ public class CalendarSyncMethodChannel {
     }
 
     do {
-      guard try userDefaults.isCalendarSyncEnabled(forCarId: carId) else {
+      guard settings[carID].isEnabled else {
         result(flutterError(code: .notEnabled, message: "Feature not enabled"))
         return
       }
@@ -201,9 +202,8 @@ public class CalendarSyncMethodChannel {
       // Obtain all calendars for the given identifiers, to make sure they still exist.
       let ekCalendars = try eventStore.calendars(for: calendarIdentifiers)
 
-      let newCalendarIdentifiersToSync = ekCalendars.map { $0.calendarIdentifier }
-      let currentCalendarIdentifiersToSync = try userDefaults.calendarIdentifiersToSync(
-        forCarId: carId)
+      let newCalendarIdentifiersToSync = Set(ekCalendars.map { $0.calendarIdentifier })
+      let currentCalendarIdentifiersToSync = settings[carID].calendarIDs
 
       let calendarIdentifiersToRemove = currentCalendarIdentifiersToSync.filter {
         !newCalendarIdentifiersToSync.contains($0)
@@ -212,10 +212,9 @@ public class CalendarSyncMethodChannel {
         !currentCalendarIdentifiersToSync.contains($0)
       }
 
-      try unsynchronize(calendarIdentifiers: calendarIdentifiersToRemove, forCarId: carId)
-      try userDefaults.store(
-        calendarIdentifiersToSync: newCalendarIdentifiersToSync, forCarId: carId)
-      try synchronize(calendarIdentifiers: calendarIdentifiersToAdd, forCarId: carId)
+      try unsynchronize(calendars: calendarIdentifiersToRemove, withCar: carID)
+      settings[carID].calendarIDs = newCalendarIdentifiersToSync
+      try synchronize(calendars: calendarIdentifiersToAdd, withCar: carID)
       result(nil)
     } catch {
       result(flutterError(code: .error, message: error.localizedDescription))
@@ -227,43 +226,40 @@ public class CalendarSyncMethodChannel {
 
   /// Un-synchronizes the calendars with the given identifiers from the specified car.
   ///
-  /// - Parameter calendarIdentifiers: A list of calendar identifiers to synchronize. If `nil` all
+  /// - Parameter calendars: A list of calendar identifiers to synchronize. If `nil` all
   ///   stored calendars will be synchronized.
-  private func unsynchronize(calendarIdentifiers: [String]? = nil, forCarId carId: String)
-    throws
-  {
-    calendarSyncClient.unsync(
-      calendarIdentifiers: try calendarIdentifiers ?? storedCalendarIdentifiers(forCarId: carId),
-      forCarId: carId)
+  private func unsynchronize(
+    calendars calendarIdentifiers: Set<String>? = nil,
+    withCar carID: String
+  ) throws {
+    try calendarSyncClient.unsync(
+      calendars: calendarIdentifiers ?? Set(settings[carID].calendarIDs),
+      withCar: carID
+    )
   }
 
   /// Synchronizes the calendars with the given identifiers to the specified car.
   ///
-  /// - Parameter calendarIdentifiers: A list of calendar identifiers to synchronize. If `nil` all
+  /// - Parameter calendars: Calendar identifiers to synchronize. If `nil` all
   ///   stored calendars will be synchronized.
   /// - Throws: `EKEventStoreError` if permission to access calendar data is not given, or
   ///   `UserDefaultsError` if user settings encoding or decoding failed.
-  private func synchronize(calendarIdentifiers: [String]? = nil, forCarId carId: String)
-    throws
-  {
+  private func synchronize(
+    calendars calendarIdentifiers: Set<String>? = nil,
+    withCar carID: String
+  ) throws {
     // Use the provided calendar identifiers or obtain all calendars for the stored identifiers,
     // to make sure they still exist.
-    let ekCalendars = try eventStore.calendars(
-      for: try calendarIdentifiers ?? storedCalendarIdentifiers(forCarId: carId))
-    if ekCalendars.isEmpty {
-      os_log("No calendars found to synchronize.", log: Self.log, type: .debug)
+    Self.log.info("Start calendar synchronizing.")
+
+    let calendarIDs = calendarIdentifiers ?? Set(settings[carID].calendarIDs)
+
+    guard !calendarIDs.isEmpty else {
+      Self.log.debug("No calendars found to synchronize.")
       return
     }
 
-    let startDate = Date()
-    let endDate = Calendar.current.date(byAdding: DateComponents(day: daysToSync), to: startDate)!
-
-    calendarSyncClient.sync(
-      calendars: ekCalendars, forCarId: carId, withStart: startDate, end: endDate)
-  }
-
-  private func storedCalendarIdentifiers(forCarId carId: String) throws -> [String] {
-    return try userDefaults.calendarIdentifiersToSync(forCarId: carId)
+    try calendarSyncClient.sync(calendars: calendarIDs, withCar: carID)
   }
 
   private func encodeJson<T: Codable>(codable: T) throws -> String {

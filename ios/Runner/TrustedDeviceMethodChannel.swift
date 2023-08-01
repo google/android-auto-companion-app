@@ -17,7 +17,6 @@ import AndroidAutoLogger
 import CoreBluetooth
 import Flutter
 import LocalAuthentication
-import os.log
 
 /// The possible errors that can result from a phone-initiated enrollment in trusted device.
 private enum TrustedDeviceEnrollmentError: Int {
@@ -28,6 +27,7 @@ private enum TrustedDeviceEnrollmentError: Int {
 
 /// This is the class used to setup Flutter method channel, handle and invoke any methods from and
 /// to Flutter app.
+@available(iOS 10.0, *)
 public class TrustedDeviceMethodChannel: TrustedDeviceModel {
 
   private static let unlockNotificationIdentifier = "trusted-device-unlock-succeed"
@@ -102,34 +102,34 @@ public class TrustedDeviceMethodChannel: TrustedDeviceModel {
   }
 
   nonisolated private func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    Task { [weak self] in
+    Task { @MainActor [weak self] in
       switch call.method {
       case TrustedDeviceConstants.openSecuritySettings:
-        await self?.openSettings()
+        self?.openSettings()
 
       case TrustedDeviceConstants.enrollTrustAgent:
-        await self?.invokeEnrollForTrustAgent(methodCall: call)
+        self?.invokeEnrollForTrustAgent(methodCall: call)
 
       case TrustedDeviceConstants.stopTrustAgentEnrollment:
-        await self?.invokeStopEnrollment(methodCall: call)
+        self?.invokeStopEnrollment(methodCall: call)
 
       case TrustedDeviceConstants.getUnlockHistory:
-        await self?.invokeRetrieveUnlockHistory(methodCall: call, result: result)
+        self?.invokeRetrieveUnlockHistory(methodCall: call, result: result)
 
       case TrustedDeviceConstants.isTrustedDeviceEnrolled:
-        await self?.invokeIsTrustedDeviceEnrolled(methodCall: call, result: result)
+        self?.invokeIsTrustedDeviceEnrolled(methodCall: call, result: result)
 
       case TrustedDeviceConstants.isDeviceUnlockRequired:
-        await self?.invokeIsDeviceUnlockRequired(methodCall: call, result: result)
+        self?.invokeIsDeviceUnlockRequired(methodCall: call, result: result)
 
       case TrustedDeviceConstants.setDeviceUnlockRequired:
-        await self?.invokeSetDeviceUnlockRequired(methodCall: call)
+        self?.invokeSetDeviceUnlockRequired(methodCall: call)
 
       case TrustedDeviceConstants.shouldShowUnlockNotification:
-        await self?.invokeShouldShowUnlockNotification(methodCall: call, result: result)
+        self?.invokeShouldShowUnlockNotification(methodCall: call, result: result)
 
       case TrustedDeviceConstants.setShowUnlockNotification:
-        await self?.invokeSetShowUnlockNotification(methodCall: call)
+        self?.invokeSetShowUnlockNotification(methodCall: call)
 
       default:
         result(FlutterMethodNotImplemented)
@@ -139,48 +139,52 @@ public class TrustedDeviceMethodChannel: TrustedDeviceModel {
 
   private func setUpConnectedDeviceCallHandler() {
     connectedDeviceMethodChannel.setMethodCallHandler { [weak self] (call, result) in
-      switch call.method {
-      case ConnectedDeviceConstants.isBluetoothEnabled:
-        result(self?.connectionManager.state.isPoweredOn)
-
-      case ConnectedDeviceConstants.isBluetoothPermissionGranted:
-        self?.invokeIsBluetoothPermissionGranted(result: result)
-
-      case ConnectedDeviceConstants.scanForCarsToAssociate:
-        self?.scanForCarsToAssociate(methodCall: call)
-
-      case ConnectedDeviceConstants.openApplicationDetailsSettings:
-        self?.openSettings()
-
-      case ConnectedDeviceConstants.openBluetoothSettings:
-        self?.openSettings()
-
-      case ConnectedDeviceConstants.associateCar:
-        self?.invokeAssociateCar(methodCall: call)
-
-      case ConnectedDeviceConstants.getAssociatedCars:
-        self?.invokeRetrieveAssociatedCars(methodCall: call, result: result)
-
-      case ConnectedDeviceConstants.getConnectedCars:
-        self?.invokeRetrieveConnectedCars(methodCall: call, result: result)
-
-      case ConnectedDeviceConstants.connectToAssociatedCars:
-        self?.connectionManager.connectToAssociatedCars()
-
-      case ConnectedDeviceConstants.clearCurrentAssociation:
-        self?.connectionManager.clearCurrentAssociation()
-
-      case ConnectedDeviceConstants.clearAssociation:
-        self?.invokeClearAssociation(methodCall: call, result: result)
-
-      case ConnectedDeviceConstants.renameCar:
-        self?.invokeRenameCar(methodCall: call, result: result)
-
-      case ConnectedDeviceConstants.isCarConnected:
-        self?.invokeIsConnected(methodCall: call, result: result)
-
-      default:
-        result(FlutterMethodNotImplemented)
+      Task { @MainActor [weak self] in
+        guard let self else { return }
+        
+        switch call.method {
+        case ConnectedDeviceConstants.isBluetoothEnabled:
+          result(self.connectionManager.state.isPoweredOn)
+          
+        case ConnectedDeviceConstants.isBluetoothPermissionGranted:
+          self.invokeIsBluetoothPermissionGranted(result: result)
+          
+        case ConnectedDeviceConstants.scanForCarsToAssociate:
+          self.scanForCarsToAssociate(methodCall: call)
+          
+        case ConnectedDeviceConstants.openApplicationDetailsSettings:
+          self.openSettings()
+          
+        case ConnectedDeviceConstants.openBluetoothSettings:
+          self.openSettings()
+          
+        case ConnectedDeviceConstants.associateCar:
+          self.invokeAssociateCar(methodCall: call)
+          
+        case ConnectedDeviceConstants.getAssociatedCars:
+          self.invokeRetrieveAssociatedCars(methodCall: call, result: result)
+          
+        case ConnectedDeviceConstants.getConnectedCars:
+          self.invokeRetrieveConnectedCars(methodCall: call, result: result)
+          
+        case ConnectedDeviceConstants.connectToAssociatedCars:
+          self.connectionManager.connectToAssociatedCars()
+          
+        case ConnectedDeviceConstants.clearCurrentAssociation:
+          self.connectionManager.clearCurrentAssociation()
+          
+        case ConnectedDeviceConstants.clearAssociation:
+          self.invokeClearAssociation(methodCall: call, result: result)
+          
+        case ConnectedDeviceConstants.renameCar:
+          self.invokeRenameCar(methodCall: call, result: result)
+          
+        case ConnectedDeviceConstants.isCarConnected:
+          self.invokeIsConnected(methodCall: call, result: result)
+          
+        default:
+          result(FlutterMethodNotImplemented)
+        }
       }
     }
   }
@@ -238,21 +242,16 @@ public class TrustedDeviceMethodChannel: TrustedDeviceModel {
   ) {
     methodChannel.invokeMethod(methodName, arguments: arguments) { result in
       if let error = result as? FlutterError {
-        os_log(
-          "invokeMethod failed for method `%@` with error: %@",
-          type: .error,
-          methodName,
-          error.message ?? "no error message")
+        self.log.error(
+          """
+          invokeMethod failed for method `\(methodName)`
+          with error: \(error.message ?? "no error message")
+          """
+        )
       } else if FlutterMethodNotImplemented.isEqual(result) {
-        os_log(
-          "method `%@` not implemented",
-          type: .error,
-          methodName)
+        self.log.error("method `\(methodName)` not implemented")
       } else {
-        os_log(
-          "Invocation of method `%@` is successful.",
-          type: .debug,
-          methodName)
+        self.log.debug("Invocation of method `\(methodName)` is successful.")
       }
     }
   }
@@ -273,33 +272,27 @@ public class TrustedDeviceMethodChannel: TrustedDeviceModel {
 
   private func invokeAssociateCar(methodCall: FlutterMethodCall) {
     guard connectionManager.state.isPoweredOn else {
-      os_log(
-        "Associate car method invoked when BLE adapter is not on. Ignoring.",
-        type: .error)
+      log.error("Associate car method invoked when BLE adapter is not on. Ignoring.")
       return
     }
 
     guard let uuid = methodCall.arguments as? String else {
-      os_log(
-        "Associate car method invoked with nil uuid. Ignoring.",
-        type: .error)
+      log.error("Associate car method invoked with nil uuid. Ignoring.")
       return
     }
 
     guard let carToAssociate = discoveredCars[uuid] else {
-      os_log(
-        "Call to associate a car with UUID %@, but no cars with that UUID found. Ignoring",
-        type: .error,
-        uuid)
+      log.error(
+        "Call to associate a car with UUID \(uuid), but no cars with that UUID found. Ignoring.")
       return
     }
 
-    os_log("Call to associate car with UUID %@", type: .debug, uuid)
+    log.debug("Call to associate car with UUID \(uuid)")
 
     do {
       try connectionManager.associate(carToAssociate)
     } catch {
-      os_log("Association was unsuccessful: %@", type: .error, error.localizedDescription)
+      log.error("Association was unsuccessful: \(error.localizedDescription)")
     }
   }
 
@@ -313,9 +306,7 @@ public class TrustedDeviceMethodChannel: TrustedDeviceModel {
 
   private func invokeClearAssociation(methodCall: FlutterMethodCall, result: FlutterResult)  {
     guard let carId = methodCall.arguments as? String else {
-      os_log(
-        "clearAssociation method invoked with invalid carId. Ignoring.",
-        type: .error)
+      log.error("clearAssociation method invoked with invalid carId. Ignoring.")
       return
     }
     clearConfig(forCarId: carId)
@@ -325,20 +316,14 @@ public class TrustedDeviceMethodChannel: TrustedDeviceModel {
 
   private func invokeEnrollForTrustAgent(methodCall: FlutterMethodCall) {
     guard let car = methodCall.argumentsToCar() else {
-      os_log(
-        "Trust agent enrollment called with invalid car. Ignoring.",
-        type: .error)
+      log.error("Trust agent enrollment called with invalid car. Ignoring.")
       return
     }
 
     do {
       try trustAgentManager.enroll(car)
     } catch {
-      os_log(
-        "Encountered error during enrollment: %@",
-        type: .error,
-        error.localizedDescription
-      )
+      log.error("Encountered error during enrollment: \(error.localizedDescription)")
 
       // Should never be something other than a `TrustAgentManagerError`.
       if let enrollmentError = error as? TrustAgentManagerError {
@@ -349,9 +334,7 @@ public class TrustedDeviceMethodChannel: TrustedDeviceModel {
 
   private func invokeRetrieveUnlockHistory(methodCall: FlutterMethodCall, result: FlutterResult) {
     guard let car = methodCall.argumentsToCar() else {
-      os_log(
-        "getUnlockHistory method invoked with invalid car. Ignoring.",
-        type: .error)
+      log.error("getUnlockHistory method invoked with invalid car. Ignoring.")
       return
     }
 
@@ -366,9 +349,7 @@ public class TrustedDeviceMethodChannel: TrustedDeviceModel {
       let carId = carMap[ConnectedDeviceConstants.carIdKey],
       let name = carMap[ConnectedDeviceConstants.carNameKey]
     else {
-      os_log(
-        "renameCar method invoked with invalid id or name. Ignoring.",
-        type: .error)
+      log.error("renameCar method invoked with invalid id or name. Ignoring.")
       return
     }
 
@@ -378,9 +359,7 @@ public class TrustedDeviceMethodChannel: TrustedDeviceModel {
   private func invokeIsTrustedDeviceEnrolled(methodCall: FlutterMethodCall, result: FlutterResult) {
     guard let car = methodCall.argumentsToCar()
     else {
-      os_log(
-        "isTrustedDeviceEnrolled method invoked with invalid id or name. Ignoring.",
-        type: .error)
+      log.error("isTrustedDeviceEnrolled method invoked with invalid id or name. Ignoring.")
       return
     }
 
@@ -398,9 +377,7 @@ public class TrustedDeviceMethodChannel: TrustedDeviceModel {
 
   private func invokeIsConnected(methodCall: FlutterMethodCall, result: FlutterResult) {
     guard let car = methodCall.argumentsToCar() else {
-      os_log(
-        "isConnected method invoked with invalid car. Ignoring.",
-        type: .error)
+      log.error("isConnected method invoked with invalid car. Ignoring.")
       return
     }
     result(isCarConnectedSecurely(car))
@@ -408,9 +385,7 @@ public class TrustedDeviceMethodChannel: TrustedDeviceModel {
 
   private func invokeStopEnrollment(methodCall: FlutterMethodCall) {
     guard let car = methodCall.argumentsToCar() else {
-      os_log(
-        "Trust agent stop enrollment called with invalid car. Ignoring.",
-        type: .error)
+      log.error("Trust agent stop enrollment called with invalid car. Ignoring.")
       return
     }
     trustAgentManager.stopEnrollment(for: car)
@@ -418,9 +393,7 @@ public class TrustedDeviceMethodChannel: TrustedDeviceModel {
 
   private func invokeIsDeviceUnlockRequired(methodCall: FlutterMethodCall, result: FlutterResult) {
     guard let car = methodCall.argumentsToCar() else {
-      os_log(
-        "IsDeviceUnlockRequired called with invalid car. Ignoring.",
-        type: .error)
+      log.error("IsDeviceUnlockRequired called with invalid car. Ignoring.")
       return
     }
     result(trustAgentManager.isDeviceUnlockRequired(for: car))
@@ -431,9 +404,7 @@ public class TrustedDeviceMethodChannel: TrustedDeviceModel {
       let arguments = methodCall.arguments as? [String: String],
       let isRequired = arguments[TrustedDeviceConstants.isDeviceUnlockRequiredKey]
     else {
-      os_log(
-        "setDeviceUnlockRequired method invoked with invalid arguments. Ignoring.",
-        type: .error)
+      log.error("setDeviceUnlockRequired method invoked with invalid arguments. Ignoring.")
       return
     }
     trustAgentManager.setDeviceUnlockRequired((isRequired as NSString).boolValue, for: car)
@@ -443,9 +414,7 @@ public class TrustedDeviceMethodChannel: TrustedDeviceModel {
     methodCall: FlutterMethodCall, result: FlutterResult
   ) {
     guard let car = methodCall.argumentsToCar() else {
-      os_log(
-        "showUnlockNotification called with invalid car. Ignoring.",
-        type: .error)
+      log.error("showUnlockNotification called with invalid car. Ignoring.")
       return
     }
     result(shouldShowUnlockNotification(for: car))
@@ -456,9 +425,7 @@ public class TrustedDeviceMethodChannel: TrustedDeviceModel {
       let arguments = methodCall.arguments as? [String: String],
       let shouldShow = arguments[TrustedDeviceConstants.shouldShowUnlockNotificationKey]
     else {
-      os_log(
-        "setShowUnlockNotification method invoked with invalid arguments. Ignoring.",
-        type: .error)
+      log.error("setShowUnlockNotification method invoked with invalid arguments. Ignoring.")
       return
     }
     let shouldShowBoolValue = (shouldShow as NSString).boolValue
@@ -499,12 +466,9 @@ public class TrustedDeviceMethodChannel: TrustedDeviceModel {
     UNUserNotificationCenter.current()
       .requestAuthorization(options: [.alert, .sound, .badge]) {
         granted, error in
-        os_log("Notification permission granted: %{bool}", type: .debug, granted)
+        self.log.debug("Notification permission granted: \(granted)")
         if let error = error {
-          os_log(
-            "Error asking for notification permission: %@",
-            type: .error,
-            error.localizedDescription)
+          self.log.error("Error asking for notification permission: \(error.localizedDescription)")
         }
       }
   }
@@ -517,9 +481,8 @@ public class TrustedDeviceMethodChannel: TrustedDeviceModel {
       case .notDetermined:
         self.showNotificationExplanationDialog(isDenied: false)
       default:
-        os_log(
-          "The notification permission status is %lld", type: .debug,
-          Int64(settings.authorizationStatus.rawValue))
+        self.log.debug(
+          "The notification permission status is \(settings.authorizationStatus.rawValue)")
       }
     }
   }
@@ -600,7 +563,7 @@ public class TrustedDeviceMethodChannel: TrustedDeviceModel {
   private func showNotification(title: String = "", body: String, identifier: String) {
     UNUserNotificationCenter.current().getNotificationSettings { settings in
       if settings.authorizationStatus != .authorized {
-        os_log("Notification permission is granted", type: .debug)
+        self.log.debug("Notification permission not granted.")
         return
       }
       let content = UNMutableNotificationContent()

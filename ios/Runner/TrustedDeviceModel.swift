@@ -13,11 +13,11 @@
 // limitations under the License.
 
 import AndroidAutoConnectedDeviceManager
-import Combine
+import AndroidAutoLogger
 import CoreBluetooth
-import os.log
 
 /// Common model for the trusted device state. Subclass this for each platform.
+@available(iOS 10.0, watchOS 6.0, *)
 @MainActor
 open class TrustedDeviceModel:
   NSObject,
@@ -40,6 +40,8 @@ open class TrustedDeviceModel:
   private var connectObservationHandle: ObservationHandle?
   private var disconnectObservationHandle: ObservationHandle?
   private var secureChannelObservationHandle: ObservationHandle?
+
+  private(set) lazy var log: Logger = Logger(for: type(of: self))
 
   override public init() {
     connectionManager = CoreBluetoothConnectionManager()
@@ -91,26 +93,22 @@ open class TrustedDeviceModel:
   /// - Parameter car: the car to associate.
   public func associate(_ car: Car) {
     guard connectionManager.state.isPoweredOn else {
-      os_log(
-        "Associate car method invoked when BLE adapter is not on. Ignoring.",
-        type: .error)
+      log.error("Associate car method invoked when BLE adapter is not on. Ignoring.")
       return
     }
 
     guard let carToAssociate = discoveredCars[car.id] else {
-      os_log(
-        "Call to associate a car with UUID %@, but no cars with that UUID found. Ignoring",
-        type: .error,
-        car.id)
+      log.error(
+        "Call to associate a car with UUID \(car.id), but no cars with that UUID found. Ignoring")
       return
     }
 
-    os_log("Call to associate car with UUID %@", type: .debug, car.id)
+    log.debug("Call to associate car with UUID \(car.id)")
 
     do {
       try connectionManager.associate(carToAssociate)
     } catch {
-      os_log("Association was unsuccessful: %@", type: .error, error.localizedDescription)
+      log.error("Association was unsuccessful: \(error.localizedDescription)")
     }
   }
 
@@ -222,6 +220,7 @@ private enum BluetoothState: String {
   case off = "2"
 }
 
+@available(iOS 10.0, watchOS 6.0, *)
 extension RadioState {
   /// Converts this `CBManagerState` to a bluetooth state that the flutter app understands.
   public func toBluetoothState() -> String {

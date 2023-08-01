@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -23,8 +23,6 @@
 		F053620A27A86A5D00EAD818 /* TrustedDeviceModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F053620427A86A5D00EAD818 /* TrustedDeviceModel.swift */; };
 		F053620B27A86A5D00EAD818 /* TrustedDeviceMethodChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F053620527A86A5D00EAD818 /* TrustedDeviceMethodChannel.swift */; };
 		F053620C27A86A5D00EAD818 /* TrustedDeviceConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F053620627A86A5D00EAD818 /* TrustedDeviceConstants.swift */; };
-		F053620D27A86A5D00EAD818 /* UserDefaults+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F053620727A86A5D00EAD818 /* UserDefaults+Extensions.swift */; };
-		F053620E27A86A5D00EAD818 /* CGColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F053620827A86A5D00EAD818 /* CGColor+Extensions.swift */; };
 		F053620F27A86A5D00EAD818 /* ConnectedDeviceConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F053620927A86A5D00EAD818 /* ConnectedDeviceConstants.swift */; };
 		F053621227A86C4000EAD818 /* AndroidAutoConnectedDeviceManager in Frameworks */ = {isa = PBXBuildFile; productRef = F053621127A86C4000EAD818 /* AndroidAutoConnectedDeviceManager */; };
 /* End PBXBuildFile section */
@@ -67,8 +65,6 @@
 		F053620427A86A5D00EAD818 /* TrustedDeviceModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrustedDeviceModel.swift; sourceTree = "<group>"; };
 		F053620527A86A5D00EAD818 /* TrustedDeviceMethodChannel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrustedDeviceMethodChannel.swift; sourceTree = "<group>"; };
 		F053620627A86A5D00EAD818 /* TrustedDeviceConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrustedDeviceConstants.swift; sourceTree = "<group>"; };
-		F053620727A86A5D00EAD818 /* UserDefaults+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UserDefaults+Extensions.swift"; sourceTree = "<group>"; };
-		F053620827A86A5D00EAD818 /* CGColor+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGColor+Extensions.swift"; sourceTree = "<group>"; };
 		F053620927A86A5D00EAD818 /* ConnectedDeviceConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectedDeviceConstants.swift; sourceTree = "<group>"; };
 		F74AED1AEAEF59BE809054A0 /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -152,12 +148,10 @@
 				7333BAD0290887BB006DEAAC /* CalendarSyncMethodChannel.swift */,
 				7333BACF290887BB006DEAAC /* EKEventStore+Extensions.swift */,
 				74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */,
-				F053620827A86A5D00EAD818 /* CGColor+Extensions.swift */,
 				F053620927A86A5D00EAD818 /* ConnectedDeviceConstants.swift */,
 				F053620627A86A5D00EAD818 /* TrustedDeviceConstants.swift */,
 				F053620527A86A5D00EAD818 /* TrustedDeviceMethodChannel.swift */,
 				F053620427A86A5D00EAD818 /* TrustedDeviceModel.swift */,
-				F053620727A86A5D00EAD818 /* UserDefaults+Extensions.swift */,
 			);
 			path = Runner;
 			sourceTree = "<group>";
@@ -323,10 +317,8 @@
 				74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
 				7333BAD1290887BB006DEAAC /* CalendarSyncConstants.swift in Sources */,
-				F053620E27A86A5D00EAD818 /* CGColor+Extensions.swift in Sources */,
 				7333BAD2290887BB006DEAAC /* EKEventStore+Extensions.swift in Sources */,
 				F053620A27A86A5D00EAD818 /* TrustedDeviceModel.swift in Sources */,
-				F053620D27A86A5D00EAD818 /* UserDefaults+Extensions.swift in Sources */,
 				F053620C27A86A5D00EAD818 /* TrustedDeviceConstants.swift in Sources */,
 				7333BAD3290887BC006DEAAC /* CalendarSyncMethodChannel.swift in Sources */,
 			);
@@ -623,7 +615,7 @@
 			repositoryURL = "https://github.com/google/android-auto-companion-calendarsync-ios";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.5.0;
+				minimumVersion = 2.0.0;
 			};
 		};
 		F053621027A86C4000EAD818 /* XCRemoteSwiftPackageReference "android-auto-companion-ios" */ = {

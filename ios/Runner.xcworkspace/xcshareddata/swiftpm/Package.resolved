@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/android-auto-companion-calendarsync-ios",
       "state" : {
-        "revision" : "84321e846f7ff6938b96951f6eea47dbb1681e4f",
-        "version" : "1.5.0"
+        "revision" : "8076506a3b302ac14b13a0011d8f1d137a915527",
+        "version" : "2.0.0"
       }
     },
     {
