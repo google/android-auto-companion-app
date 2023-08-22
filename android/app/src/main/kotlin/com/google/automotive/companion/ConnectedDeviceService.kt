@@ -19,7 +19,7 @@ package com.google.automotive.companion
 import android.app.Notification
 import android.content.Context
 import android.content.Intent
-import com.google.android.libraries.car.calendarsync.feature.CalendarSyncManager
+import com.google.android.libraries.car.calendarsync.feature.CalendarSyncManagerV2
 import com.google.android.libraries.car.communication.messagingsync.MessagingSyncManager
 import com.google.android.libraries.car.connectionservice.ConnectedDeviceBaseService
 import com.google.android.libraries.car.trustagent.FeatureManager
@@ -31,7 +31,7 @@ class ConnectedDeviceService : ConnectedDeviceBaseService() {
   override fun createFeatureManagers(): List<FeatureManager> =
     listOf(
       TrustedDeviceManager(context = this),
-      CalendarSyncManager(context = this),
+      CalendarSyncManagerV2(context = this),
       MessagingSyncManager(context = this),
     )
 
