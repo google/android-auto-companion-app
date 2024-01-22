@@ -88,7 +88,7 @@ import UIKit
       case CalendarSyncConstants.hasPermissions:
         result(self.eventStore.hasPermissions)
       case CalendarSyncConstants.requestPermissions:
-        self.requestPermissions(result: result)
+        await self.requestPermissions(result: result)
       case CalendarSyncConstants.retrieveCalendars:
         self.retrieveCalendars(result: result)
       case CalendarSyncConstants.disableCar:
@@ -107,13 +107,26 @@ import UIKit
     }
   }
 
-  private func requestPermissions(result: @escaping FlutterResult) {
-    if eventStore.hasPermissions {
+  private func requestPermissions(result: @escaping FlutterResult) async {
+    if eventStore.isAuthorized {
       result(true)
       return
     }
-    eventStore.requestAccess(to: .event) { granted, _ in
-      result(granted)
+
+    do {
+      let isGranted: Bool
+      if #available(iOS 17.0, *) {
+        isGranted = try await eventStore.requestFullAccessToEvents()
+      } else {
+        isGranted = try await eventStore.requestAccess(to: .event)
+      }
+      result(isGranted)
+    } catch {
+      Self.log.error(
+        """
+        Error requesting full access to calendar events: \(error.localizedDescription)
+        """
+      )
     }
   }
 
