@@ -189,7 +189,7 @@ public class TrustedDeviceMethodChannel: TrustedDeviceModel {
     }
   }
 
-  override public func onStateChange(state: RadioState) {
+  override public func onStateChange(state: any RadioState) {
     invokeFlutterMethod(
       ConnectedDeviceConstants.onStateChanged,
       arguments: [
@@ -583,7 +583,7 @@ public class TrustedDeviceMethodChannel: TrustedDeviceModel {
 
   public override func connectionManager(
     _ connectionManager: AnyConnectionManager,
-    didDiscover car: AnyPeripheral,
+    didDiscover car: any AutoPeripheral,
     advertisedName: String?
   ) {
     super.connectionManager(connectionManager, didDiscover: car, advertisedName: advertisedName)
@@ -602,7 +602,7 @@ public class TrustedDeviceMethodChannel: TrustedDeviceModel {
 
   public override func connectionManager(
     _ connectionManager: AnyConnectionManager,
-    didDisconnect peripheral: AnyPeripheral
+    didDisconnect peripheral: any AutoPeripheral
   ) {
     super.connectionManager(connectionManager, didDisconnect: peripheral)
 

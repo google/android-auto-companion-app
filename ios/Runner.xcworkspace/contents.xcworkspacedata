@@ -2,6 +2,12 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:../../android-auto-companion-ios">
+   </FileRef>
+   <FileRef
+      location = "group:../../android-auto-companion-calendarsync-ios">
+   </FileRef>
+   <FileRef
       location = "group:Runner.xcodeproj">
    </FileRef>
    <FileRef

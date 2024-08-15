@@ -74,10 +74,12 @@ open class TrustedDeviceModel:
   }
 
   deinit {
-    stateObservationHandle?.cancel()
-    connectObservationHandle?.cancel()
-    disconnectObservationHandle?.cancel()
-    secureChannelObservationHandle?.cancel()
+    Task { @MainActor in
+      stateObservationHandle?.cancel()
+      connectObservationHandle?.cancel()
+      disconnectObservationHandle?.cancel()
+      secureChannelObservationHandle?.cancel()
+    }
   }
 
   /// Determine whether there is a secure connection with the car having the specified id.
@@ -114,7 +116,7 @@ open class TrustedDeviceModel:
 
   // MARK: - observation handling
 
-  open func onStateChange(state: RadioState) {
+  open func onStateChange(state: any RadioState) {
     // subclasses should override
   }
 
@@ -134,7 +136,7 @@ open class TrustedDeviceModel:
 
   open func connectionManager(
     _ connectionManager: AnyConnectionManager,
-    didDiscover anyCar: AnyPeripheral,
+    didDiscover anyCar: any AutoPeripheral,
     advertisedName: String?
   ) {
     guard let car = anyCar as? CBPeripheral else {
@@ -145,14 +147,14 @@ open class TrustedDeviceModel:
 
   open func connectionManager(
     _ connectionManager: AnyConnectionManager,
-    didConnect peripheral: AnyPeripheral
+    didConnect peripheral: any AutoPeripheral
   ) {
     // Nothing is using this callback right now, so this is a no-op.
   }
 
   open func connectionManager(
     _ connectionManager: AnyConnectionManager,
-    didDisconnect peripheral: AnyPeripheral
+    didDisconnect peripheral: any AutoPeripheral
   ) {
     discoveredCars[peripheral.identifier.uuidString] = nil
   }
