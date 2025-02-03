@@ -463,18 +463,21 @@ public class TrustedDeviceMethodChannel: TrustedDeviceModel {
   /// Pop up the system notification permission dialog.
   /// The dialog will not be shown if the permission has been denied before.
   private func requestNotificationPermission() {
-    UNUserNotificationCenter.current()
-      .requestAuthorization(options: [.alert, .sound, .badge]) {
-        granted, error in
+    Task {
+      self.log("Request Notification Permission")
+      do {
+        let granted = try await UNUserNotificationCenter.current()
+          .requestAuthorization(options: [.alert, .sound, .badge])
         self.log.debug("Notification permission granted: \(granted)")
-        if let error = error {
-          self.log.error("Error asking for notification permission: \(error.localizedDescription)")
-        }
+      } catch {
+        self.log.error("Error asking for notification permission: \(error.localizedDescription)")
       }
+    }
   }
 
   private func showNotificationPermissionDialogIfNeeded() {
-    UNUserNotificationCenter.current().getNotificationSettings { settings in
+    Task {
+      let settings = await UNUserNotificationCenter.current().notificationSettings()
       switch settings.authorizationStatus {
       case .denied:
         self.showNotificationExplanationDialog(isDenied: true)
@@ -512,7 +515,7 @@ public class TrustedDeviceMethodChannel: TrustedDeviceModel {
           }))
     }
 
-    DispatchQueue.main.async {
+    Task { @MainActor in
       self.flutterViewController.present(alert, animated: true)
     }
   }
@@ -561,7 +564,8 @@ public class TrustedDeviceMethodChannel: TrustedDeviceModel {
    }
 
   private func showNotification(title: String = "", body: String, identifier: String) {
-    UNUserNotificationCenter.current().getNotificationSettings { settings in
+    Task {
+      let settings = await UNUserNotificationCenter.current().notificationSettings()
       if settings.authorizationStatus != .authorized {
         self.log.debug("Notification permission not granted.")
         return
@@ -575,7 +579,7 @@ public class TrustedDeviceMethodChannel: TrustedDeviceModel {
         identifier: identifier, content: content, trigger: trigger)
 
       let center = UNUserNotificationCenter.current()
-      center.add(request)
+      try await center.add(request)
     }
   }
 
